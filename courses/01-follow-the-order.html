@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Session 1 · Follow the order: how one purchase becomes a dashboard - learn data pipelines with phoebe</title>
+<link rel="stylesheet" href="../assets/style.css?v=1">
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="wrap">
+    <span class="crumb"><a href="../index.html">learn-data-pipelines-with-phoebe</a> / Session 1 of 6</span>
+    <button class="btn" id="toggle-all" type="button">Expand all</button>
+    <button class="btn primary" id="zoom-toggle" type="button">Projector zoom: off</button>
+  </div>
+</div>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="eyebrow">Learn Data Pipelines with Phoebe · Session 1 of 6</div>
+    <h1>Follow the order: how one purchase <span class="accent">becomes a dashboard</span></h1>
+    <p class="sub">At 11:41pm someone buys a $42 coffee gift bundle. At 9am on Monday, that purchase is one pixel inside a revenue number an executive glances at for four seconds. This course walks the road between those two moments - in plain English, with zero code. Today: the whole journey at a glance, and why every company ends up building one.</p>
+    <div class="chip-row">
+      <span class="chip level">🟢 Easiest</span>
+      <span class="chip audience">No code, no jargon</span>
+      <span class="chip audience">Anyone who reads dashboards</span>
+      <span class="chip time">45 min + self-study depth</span>
+    </div>
+    <div class="agenda">
+      <span class="a1" style="flex:1">0-3 · Welcome</span>
+      <span class="a2" style="flex:4">3-22 · Concepts</span>
+      <span class="a3" style="flex:4">22-40 · Trace a number</span>
+      <span class="a4" style="flex:1">40-45 · Q&amp;A</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ============ INTRO ============ -->
+  <section class="section" id="intro">
+    <div class="section-kicker">
+      <span class="klabel">Part 0</span>
+      <h2>Why this session exists</h2>
+    </div>
+    <p class="lede">Everyone trusts the dashboard. Almost nobody can say how a number gets onto it - and that gap is where bad decisions are born. A data pipeline is not a technology; it is a supply chain for facts, and like any supply chain it has trucks, warehouses, quality checks, and days when a shipment silently goes missing. Once you can picture the road, every conversation with your data team gets easier, and every suspicious number gets easier to question.</p>
+    <div class="legend">
+      <span class="pill solid">Live - covered in session</span>
+      <span class="pill light">Self-study - read after</span>
+      <span class="pill peach">✦ Try it on your own dashboard</span>
+      <span class="pill inkpill">☕ The Daybreak case</span>
+    </div>
+    <div class="callout win">
+      <strong>★ What you walk out with today</strong>
+      The six-stage journey every dashboard number travels (you will be able to sketch it on a napkin), the story of why hand-made spreadsheets always break at the same point, and one real number from your own work traced back to its birthplace.
+    </div>
+    <div class="callout tip">
+      <strong>The plain-English promise (used all course)</strong>
+      Every tool name you have overheard - Snowflake, dbt, Airflow, Fivetran - gets decoded into a plain-English job description before this course ends. No session requires code. Where a topic deserves real depth, we point honestly at the deeper course instead of pretending 45 minutes covers it.
+    </div>
+  </section>
+
+  <!-- ============ PART 1: WHAT A PIPELINE IS ============ -->
+  <section class="section" id="what-pipeline">
+    <div class="section-kicker">
+      <span class="klabel">Part 1 · covers the working definition</span>
+      <h2>What a data pipeline actually is <span class="tag concept">7 min live</span></h2>
+    </div>
+    <p class="lede">A data pipeline is <strong>the automated road a piece of data travels from where it is born to where a human uses it</strong>. Six stages, always the same shape: something creates data, something copies it out, something stores it, something cleans it, something turns it into a metric, and something displays it. The industry has a formal name for this spine - the data engineering lifecycle - but the napkin version below is the one you will actually use.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The six stages of a data pipeline from source to dashboard">
+        <style>
+          .plT { font: 700 15px Inter, sans-serif; fill: #FFFFFF; }
+          .plS { font: 400 12px Inter, sans-serif; fill: #64707A; }
+          .plN { font: 600 14px Inter, sans-serif; fill: #3A2A0E; }
+          .plA { stroke: #C3CDD6; stroke-width: 2.5; fill: none; marker-end: url(#plAh); }
+          .plE { font: 400 20px Inter, sans-serif; }
+        </style>
+        <defs>
+          <marker id="plAh" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6" fill="none" stroke="#C3CDD6" stroke-width="1.5"/>
+          </marker>
+        </defs>
+        <rect x="20" y="50" width="125" height="64" rx="12" fill="#075985"/>
+        <text class="plE" x="34" y="78">🛒</text><text class="plT" x="60" y="80">Source</text>
+        <text class="plS" x="20" y="138">where data is born</text>
+        <text class="plS" x="20" y="154">(the checkout app)</text>
+        <line class="plA" x1="150" y1="82" x2="160" y2="82"/>
+        <rect x="164" y="50" width="125" height="64" rx="12" fill="#0284C7"/>
+        <text class="plE" x="178" y="78">🚚</text><text class="plT" x="204" y="80">Ingest</text>
+        <text class="plS" x="164" y="138">the overnight copy</text>
+        <text class="plS" x="164" y="154">out of the app</text>
+        <line class="plA" x1="294" y1="82" x2="304" y2="82"/>
+        <rect x="308" y="50" width="125" height="64" rx="12" fill="#0284C7"/>
+        <text class="plE" x="322" y="78">🏬</text><text class="plT" x="348" y="80">Store</text>
+        <text class="plS" x="308" y="138">the warehouse -</text>
+        <text class="plS" x="308" y="154">one big shelf</text>
+        <line class="plA" x1="438" y1="82" x2="448" y2="82"/>
+        <rect x="452" y="50" width="125" height="64" rx="12" fill="#0EA5E9"/>
+        <text class="plE" x="466" y="78">🧼</text><text class="plT" x="492" y="80">Transform</text>
+        <text class="plS" x="452" y="138">clean, join, fix -</text>
+        <text class="plS" x="452" y="154">raw to ready</text>
+        <line class="plA" x1="582" y1="82" x2="592" y2="82"/>
+        <rect x="596" y="50" width="125" height="64" rx="12" fill="#0EA5E9"/>
+        <text class="plE" x="610" y="78">📐</text><text class="plT" x="636" y="80">Metrics</text>
+        <text class="plS" x="596" y="138">agree what counts</text>
+        <text class="plS" x="596" y="154">as "revenue"</text>
+        <line class="plA" x1="726" y1="82" x2="736" y2="82"/>
+        <rect x="740" y="50" width="125" height="64" rx="12" fill="#C08A3E"/>
+        <text class="plE" x="754" y="78">📊</text><text class="plT" x="780" y="80">Serve</text>
+        <text class="plS" x="740" y="138">dashboard, alert,</text>
+        <text class="plS" x="740" y="154">or an AI model</text>
+        <rect x="20" y="210" width="14" height="14" rx="3" fill="#C08A3E"/>
+        <text class="plN" x="44" y="222">Same six stages in every company - only the tool names on the boxes change.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the six stages every dashboard number travels</figcaption>
+    </figure>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>The supply-chain analogy that makes it stick<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Think of a physical supply chain: a farm grows beans, a truck collects them, a warehouse shelves them, a roastery processes them, a barista turns them into a drink, and a customer tastes the result. A data pipeline is exactly this, for facts:</p>
+        <ul>
+          <li><strong>The farm</strong> is a source system - the checkout app, the ad platform, the support tool. Data is a by-product of business happening.</li>
+          <li><strong>The truck</strong> is ingestion - a scheduled pickup that copies new data out, typically overnight.</li>
+          <li><strong>The warehouse</strong> is, literally, called a data warehouse. The industry gave up on metaphor here.</li>
+          <li><strong>The roastery</strong> is transformation - raw data is full of duplicates, test orders, and typos, and someone has to clean it before anyone drinks it.</li>
+          <li><strong>The tasting</strong> is serving - the dashboard, the weekly email, the alert, increasingly the AI model.</li>
+        </ul>
+        <p>The analogy earns its keep on bad days: when a truck breaks down, shelves go empty and everyone notices. When a pipeline breaks, the dashboard keeps smiling and shows old numbers. Session 5 is entirely about that difference.</p>
+        <div class="callout example"><span class="ex-pill">Real world</span>The industry's standard textbook spine - generation, ingestion, storage, transformation, serving - is exactly this picture. It is how DeepLearning.AI's Data Engineering certificate organizes 100+ hours of material. You now know the table of contents.</div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Why "pipeline" and not just "a report someone makes"<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>The word pipeline signals two promises that a hand-made report never makes:</p>
+        <ul>
+          <li><strong>It runs by itself.</strong> Nobody clicks anything at 2am. The pickup, the cleaning, and the refresh happen on a schedule - which is why the Monday dashboard exists before anyone is awake.</li>
+          <li><strong>It runs the same way every time.</strong> The same cleaning rules, the same definition of revenue, every single day. A human rebuilding a spreadsheet applies slightly different judgment every Friday, and nobody can say which Friday was right.</li>
+        </ul>
+        <p>Automation is not about saving effort first - it is about making the number <em>reproducible</em>. "Where did this figure come from?" has an answer when a pipeline made it. It has a shrug when a spreadsheet did.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>The two-word version of every stage<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>For your napkin: <strong>Source</strong> = business happens. <strong>Ingest</strong> = copy it out. <strong>Store</strong> = one big shelf. <strong>Transform</strong> = raw to ready. <strong>Metrics</strong> = agree on definitions. <strong>Serve</strong> = put it in front of a human (or a model).</p>
+        <table class="clean">
+          <tr><th>Stage</th><th>Plain-English job</th><th>Tool names you may have overheard</th></tr>
+          <tr><td>Source</td><td>Where data is born</td><td>your app's database, Stripe, Shopify, Google Ads</td></tr>
+          <tr><td>Ingest</td><td>The scheduled pickup</td><td>Fivetran, Airbyte</td></tr>
+          <tr><td>Store</td><td>The shelf everything lands on</td><td>Snowflake, BigQuery, Databricks</td></tr>
+          <tr><td>Transform</td><td>The cleanup room</td><td>dbt</td></tr>
+          <tr><td>Metrics + serve</td><td>Definitions, then the screen</td><td>Looker, Tableau, Power BI</td></tr>
+        </table>
+        <p>Do not memorize the right column - session 6 hands you a full decoder table. The left two columns are the actual lesson.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 2: MEET ORDER #8412 ============ -->
+  <section class="section" id="meet-order">
+    <div class="section-kicker">
+      <span class="klabel">Part 2 · covers the running case</span>
+      <h2>Meet order #8412 ☕ <span class="tag concept">8 min live</span></h2>
+    </div>
+    <p class="lede">Our running case all course: <strong>Daybreak</strong>, a coffee-subscription brand. On Sunday at 11:41pm, a customer buys a $42 gift bundle - order #8412. Here is that single order's overnight journey to the Monday 9am revenue dashboard, with clock times. Every session from now on zooms into one or two of these stops.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Timeline of order 8412 from Sunday 11:41pm checkout to Monday 9am dashboard">
+        <style>
+          .ojT { font: 700 14px Inter, sans-serif; fill: #1C2B36; }
+          .ojC { font: 800 13px Inter, sans-serif; fill: #0284C7; }
+          .ojX { font: 400 12px Inter, sans-serif; fill: #64707A; }
+          .ojN { font: 600 14px Inter, sans-serif; fill: #3A2A0E; }
+          .ojL { stroke: #7DD3FC; stroke-width: 3; }
+        </style>
+        <line class="ojL" x1="60" y1="60" x2="820" y2="60"/>
+        <circle cx="60" cy="60" r="9" fill="#075985"/>
+        <text class="ojC" x="24" y="34">11:41pm Sun</text>
+        <text class="ojT" x="20" y="92">Checkout</text>
+        <text class="ojX" x="20" y="110">order #8412 written</text>
+        <text class="ojX" x="20" y="126">into the app database</text>
+        <circle cx="212" cy="60" r="9" fill="#0284C7"/>
+        <text class="ojC" x="184" y="34">2:00am</text>
+        <text class="ojT" x="176" y="92">Pickup</text>
+        <text class="ojX" x="176" y="110">the nightly sync copies</text>
+        <text class="ojX" x="176" y="126">new orders out</text>
+        <circle cx="364" cy="60" r="9" fill="#0284C7"/>
+        <text class="ojC" x="336" y="34">2:15am</text>
+        <text class="ojT" x="328" y="92">Landed raw</text>
+        <text class="ojX" x="328" y="110">sits on the warehouse</text>
+        <text class="ojX" x="328" y="126">shelf, untouched</text>
+        <circle cx="516" cy="60" r="9" fill="#0EA5E9"/>
+        <text class="ojC" x="488" y="34">4:30am</text>
+        <text class="ojT" x="480" y="92">Cleaned</text>
+        <text class="ojX" x="480" y="110">de-duplicated, test orders</text>
+        <text class="ojX" x="480" y="126">removed, refunds joined</text>
+        <circle cx="668" cy="60" r="9" fill="#0EA5E9"/>
+        <text class="ojC" x="640" y="34">5:45am</text>
+        <text class="ojT" x="632" y="92">Counted</text>
+        <text class="ojX" x="632" y="110">$42 added into Sunday's</text>
+        <text class="ojX" x="632" y="126">revenue metric</text>
+        <circle cx="820" cy="60" r="9" fill="#C08A3E"/>
+        <text class="ojC" x="782" y="34">6:05am</text>
+        <text class="ojT" x="770" y="92">On screen</text>
+        <text class="ojX" x="756" y="110">dashboard refreshed,</text>
+        <text class="ojX" x="756" y="126">read at 9am</text>
+        <rect x="20" y="180" width="840" height="66" rx="12" fill="#E8F5FD"/>
+        <text class="ojT" x="40" y="208">The whole journey took 6 hours and 24 minutes, and no human touched it.</text>
+        <text class="ojX" x="40" y="230">That is a pipeline: scheduled, automatic, identical every night. The executive sees one number; you now see six hand-offs.</text>
+        <rect x="20" y="264" width="14" height="14" rx="3" fill="#C08A3E"/>
+        <text class="ojN" x="44" y="276">Remember 6:05am - session 5 asks what the screen shows when the 2am truck never arrives.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - order #8412's overnight journey, checkout to dashboard</figcaption>
+    </figure>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>What each hand-off quietly does to the order<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Order #8412 does not just move - it changes shape at every stop, and each change is a decision someone made:</p>
+        <ul>
+          <li><strong>At pickup (2am):</strong> only <em>new and changed</em> rows are copied - the truck does not re-haul the whole history every night. Deciding what counts as "changed" is a real design choice.</li>
+          <li><strong>On the raw shelf (2:15am):</strong> the order is stored exactly as the app wrote it, typos and all. Keeping an untouched copy sounds wasteful; session 3 explains why it is the single best habit in the building.</li>
+          <li><strong>In the cleanup room (4:30am):</strong> the customer's duplicate click is collapsed, the QA team's test orders vanish, and the refund from a different system is matched to it. The order is now <em>opinionated</em>.</li>
+          <li><strong>At counting (5:45am):</strong> someone, at some point, decided whether gift bundles count as "subscription revenue" or "one-time revenue". Order #8412 inherits that decision forever.</li>
+        </ul>
+        <div class="callout example"><span class="ex-pill">Real world</span>Ask two departments for "yesterday's revenue" and you will often get two numbers. Nine times out of ten the pipelines are fine - the two teams simply bolted different <em>definitions</em> onto stage five. You now know exactly where that disagreement lives.</div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Why Daybreak, and where you have seen it before<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Daybreak is the running company across this shelf's data-engineering courses - the sister course <strong>learn-data-warehouse-with-phoebe</strong> opens with Daybreak's app database meeting its first real dashboard, badly. This course walks the whole conveyor belt in plain English; that one moves into the Store box with real SQL. Same company, deeper floor. If this course leaves you wanting the technical layer, that is your next door.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 3: WHY COMPANIES BOTHER ============ -->
+  <section class="section" id="why-bother">
+    <div class="section-kicker">
+      <span class="klabel">Part 3 · covers the before-times</span>
+      <h2>The spreadsheet era, and why it always ends <span class="tag concept">7 min live</span></h2>
+    </div>
+    <p class="lede">No company starts with a pipeline. Every company starts with a smart person, an export button, and a spreadsheet - and it genuinely works, for a while. The pipeline gets built the week the spreadsheet fails publicly. The failure is so predictable it deserves a diagram.</p>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>The four-step life of the Friday spreadsheet<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Daybreak's early days, and probably your company's too:</p>
+        <div class="steps">
+          <div class="step"><p><strong>The hero era.</strong> An analyst exports orders every Friday, cleans them by hand, and emails "the numbers". Fast, free, and correct - because one careful person holds every rule in their head.</p></div>
+          <div class="step"><p><strong>The copy era.</strong> The file gets forwarded, edited, and re-saved as <em>revenue_FINAL_v3_realfinal.xlsx</em>. Marketing's copy and finance's copy quietly diverge. Meetings start with ten minutes of "whose number is right?"</p></div>
+          <div class="step"><p><strong>The absence.</strong> The analyst takes two weeks off. Either the numbers simply stop, or a stand-in rebuilds them slightly differently and nobody can say which version was right. Both outcomes shake trust.</p></div>
+          <div class="step"><p><strong>The public failure.</strong> A number quoted upward - to a board, an investor, an audit - turns out wrong, and nobody can reconstruct how it was made. THIS is the week the pipeline project gets funded. Daybreak's version: a payment partner asked how refund figures were produced, and the honest answer was "Sarah makes them".</p></div>
+        </div>
+        <p>Notice what actually failed: not effort, not intelligence - <strong>reproducibility</strong>. The pipeline is the company's way of writing the rules down somewhere a vacation cannot erase.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>What a pipeline buys you (and what it does not)<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Honest ledger, both columns:</p>
+        <table class="clean">
+          <tr><th>A pipeline buys</th><th>A pipeline does NOT buy</th></tr>
+          <tr><td>The same rules applied every night, written down and reviewable</td><td>Correct rules - a wrong definition runs punctually forever</td></tr>
+          <tr><td>Numbers ready before anyone wakes up</td><td>Numbers anyone actually reads - adoption is a people problem</td></tr>
+          <tr><td>One shared source instead of forked copies</td><td>Agreement on what "revenue" means - humans still have to decide that</td></tr>
+          <tr><td>A place to attach quality checks (session 5)</td><td>Freedom from breakage - things WILL break; the win is noticing fast</td></tr>
+        </table>
+        <div class="callout example"><span class="ex-pill">Real world</span>A 2022 Monte Carlo/Wakefield survey of 300 data professionals found they spend roughly 40% of their working day - about two days a week - checking and firefighting data quality. Pipelines do not remove that work; they make it visible and fixable instead of invisible and personal.</div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>When a spreadsheet is honestly fine<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Fairness demands the other direction too: a one-off analysis, a tiny team, a question you will ask exactly once - a spreadsheet is the right tool, and building a pipeline for it is procrastination wearing a hard hat. The signal to upgrade is <strong>repetition</strong>: the third time someone rebuilds the same numbers by hand, the rules deserve to live in a pipeline instead of a person.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ DEMO ============ -->
+  <section class="section" id="demo">
+    <div class="section-kicker">
+      <span class="klabel">Everyone traces</span>
+      <h2>Trace one of your own numbers 🧭 <span class="tag demo">★ 18 min · everyone works</span></h2>
+    </div>
+    <p class="lede">No laptop needed - a notebook works. Pick one number you saw at work this week and walk it backward through the six stages. You will not know every answer, and the blanks ARE the exercise: each blank is a question your data team can answer in one sentence.</p>
+    <div class="steps">
+      <div class="step"><p><strong>Pick your number.</strong> Something you actually saw: weekly sales, sign-ups, ticket count, campaign clicks. Write it down, with its dashboard's name.</p></div>
+      <div class="step"><p><strong>Name the source.</strong> Where was this data <em>born</em>? Which app or system recorded the underlying events? (If the answer is "a spreadsheet someone fills in", write that honestly - it is a source too, just a fragile one.)</p></div>
+      <div class="step"><p><strong>Guess the truck schedule.</strong> Does the dashboard change during the day (near-real-time pickup) or once each morning (an overnight batch)? Look for a "last updated" note anywhere on it - just looking for one teaches you session 5's lesson early.</p></div>
+      <div class="step"><p><strong>Spot one cleaning rule.</strong> Name one thing that MUST have been filtered or fixed for your number to make sense - test accounts removed, refunds subtracted, currencies converted, duplicates collapsed. There is always at least one.</p></div>
+      <div class="step"><p><strong>Question the definition.</strong> Write your number's definition as a sentence: "revenue = ___ minus ___, counted when ___". If you cannot finish the sentence, circle it - that circle is the most valuable thing you produce today.</p></div>
+      <div class="step"><p><strong>Draw the napkin.</strong> Six boxes, arrows, your number's actual journey with everything you know filled in. Blanks stay blank. Keep it - session 6 turns it into a set of questions for your data team.</p></div>
+    </div>
+    <div class="callout tip">
+      <strong>✦ If you finish early</strong>
+      Trace a second number from a DIFFERENT team's dashboard and compare napkins. Different sources, same six shapes - that sameness is the whole reason this course can exist.
+    </div>
+  </section>
+
+  <!-- ============ EXERCISE ============ -->
+  <section class="section" id="exercise">
+    <div class="section-kicker">
+      <span class="klabel">Before next session</span>
+      <h2>Homework 📝 <span class="tag exercise">◐ 20 minutes</span></h2>
+    </div>
+    <ul>
+      <li><strong>Finish your napkin</strong> if the session ran short, and photograph it - you will re-draw it in session 6 and enjoy the difference.</li>
+      <li><strong>Find the "last updated" stamp</strong> on two dashboards you use. If one has none, note that - you have found a freshness blind spot two sessions before we name it.</li>
+      <li><strong>Collect one tool name</strong> you hear this week (in a meeting, a job post, a Slack channel) and park it. Session 6's decoder table will probably have it.</li>
+    </ul>
+  </section>
+
+  <!-- ============ QUIZ ============ -->
+  <section class="section" id="quiz">
+    <div class="section-kicker">
+      <span class="klabel">Check yourself</span>
+      <h2>Three questions before you go 🎯 <span class="tag exercise">◐ 90 seconds</span></h2>
+    </div>
+    <div class="quiz-q" data-answer="2">
+      <p class="qtext">1 · The six stages of the pipeline journey, in order, are...</p>
+      <button class="qopt" type="button">A · store, ingest, source, serve, transform, metrics</button>
+      <button class="qopt" type="button">B · source, store, ingest, metrics, transform, serve</button>
+      <button class="qopt" type="button">C · source, ingest, store, transform, metrics, serve</button>
+      <p class="qwhy">Born, picked up, shelved, cleaned, counted, shown. The supply chain runs one direction - and every company's pipeline has this same spine, whatever tools sit on the boxes.</p>
+    </div>
+    <div class="quiz-q" data-answer="1">
+      <p class="qtext">2 · The deepest thing the Friday-spreadsheet era lacks is...</p>
+      <button class="qopt" type="button">A · effort - analysts are not working hard enough</button>
+      <button class="qopt" type="button">B · reproducibility - nobody can reconstruct how a number was made</button>
+      <button class="qopt" type="button">C · speed - spreadsheets calculate too slowly</button>
+      <p class="qwhy">The hero analyst works plenty hard and Excel is plenty fast. What dies is the ability to answer "where did this figure come from?" - the rules live in one person's head, and heads take vacations.</p>
+    </div>
+    <div class="quiz-q" data-answer="0">
+      <p class="qtext">3 · Two departments report different numbers for "yesterday's revenue". The most common culprit is...</p>
+      <button class="qopt" type="button">A · different metric definitions at the counting stage</button>
+      <button class="qopt" type="button">B · one of the two databases is corrupted</button>
+      <button class="qopt" type="button">C · someone is manipulating the figures</button>
+      <p class="qwhy">Usually both pipelines work fine - one team counts refunds and gift bundles one way, the other team another. The disagreement lives at stage five, in a human decision, not in the machinery.</p>
+    </div>
+    <p class="quiz-score"></p>
+  </section>
+
+  <!-- ============ SOURCES COVERED ============ -->
+  <section class="section" id="official">
+    <div class="section-kicker">
+      <span class="klabel">Coverage, honestly</span>
+      <h2>What this session covered from the official universe</h2>
+    </div>
+    <div class="covered">
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">DeepLearning.AI Data Engineering - the lifecycle spine</span><span class="note">generation, ingestion, storage, transformation, serving - taught as the six-stage napkin</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">DataCamp Understanding Data Engineering - ch 1</span><span class="note">what a pipeline is, pipeline vs hand-made report, no-code framing</span></div>
+      <div class="covered-row"><span class="status pill light">◐</span><span class="name">IBM Intro to Data Engineering - module 1</span><span class="note">roles and day-in-the-life deferred to session 6</span></div>
+    </div>
+    <p>Certificates, videos, and graded assessments stay with the official providers - this course teaches the working core in plain English. Full source map in the repo's <em>materials/official-course-map.md</em>.</p>
+  </section>
+
+  <!-- ============ CHEAT SHEET ============ -->
+  <section class="cheat" id="cheatsheet">
+    <h3>Session 1 cheat sheet</h3>
+    <div class="grid-2">
+      <div class="cheat-item"><b>A pipeline is</b><span>The automated road from where data is born to where a human uses it. Scheduled, identical every run.</span></div>
+      <div class="cheat-item"><b>The six stages</b><span>Source → ingest → store → transform → metrics → serve. Same spine everywhere; only tool names change.</span></div>
+      <div class="cheat-item"><b>Order #8412</b><span>11:41pm checkout → 2am pickup → 2:15 raw shelf → 4:30 cleaned → 5:45 counted → 6:05am on screen. Zero humans.</span></div>
+      <div class="cheat-item"><b>Why spreadsheets die</b><span>Not effort - reproducibility. Rules living in one head fail publicly, then the pipeline gets funded.</span></div>
+      <div class="cheat-item"><b>Two-numbers mystery</b><span>Different "yesterday's revenue" per team = different definitions at the metrics stage, not broken machines.</span></div>
+      <div class="cheat-item"><b>What pipelines do not fix</b><span>Wrong definitions run punctually forever. And things still break - session 5 is how you notice.</span></div>
+      <div class="cheat-item"><b>Upgrade signal</b><span>The third hand-rebuild of the same numbers. Once is analysis, twice is coincidence, three times is a pipeline.</span></div>
+      <div class="cheat-item"><b>Your napkin</b><span>Six boxes with blanks. Each blank is a one-sentence question for your data team - session 6 cashes it in.</span></div>
+    </div>
+  </section>
+
+  <footer class="pagefoot">
+    <span>Session 1 of 6 · learn-data-pipelines-with-phoebe · by Phoebe Fu &nbsp;·&nbsp; 📚 <a href="https://phoebefu6.github.io/learn-with-phoebe/">Learn with Phoebe ↗</a></span>
+    <span><a href="../index.html">← All sessions</a> &nbsp;·&nbsp; <a href="02-where-data-is-born.html">Next: Where data is born →</a></span>
+  </footer>
+
+</main>
+
+<script src="../assets/app.js?v=1"></script>
+</body>
+</html>

@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Session 2 · Where data is born: sources and the overnight pickup - learn data pipelines with phoebe</title>
+<link rel="stylesheet" href="../assets/style.css?v=1">
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="wrap">
+    <span class="crumb"><a href="../index.html">learn-data-pipelines-with-phoebe</a> / Session 2 of 6</span>
+    <button class="btn" id="toggle-all" type="button">Expand all</button>
+    <button class="btn primary" id="zoom-toggle" type="button">Projector zoom: off</button>
+  </div>
+</div>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="eyebrow">Learn Data Pipelines with Phoebe · Session 2 of 6</div>
+    <h1>Where data is born: sources and <span class="accent">the overnight pickup</span></h1>
+    <p class="sub">Order #8412 did not start life as "data". It started as a thumb tapping "Buy" at 11:41pm, and the checkout app wrote it down as a side effect. Today we visit the farms: the four families of places where data is born, the 2am truck that collects from all of them, and the one genuinely useful question in the batch-versus-streaming debate - does your number need to be seconds fresh, or is tomorrow morning honestly fine?</p>
+    <div class="chip-row">
+      <span class="chip level">🟢 Easiest</span>
+      <span class="chip audience">No code, no jargon</span>
+      <span class="chip audience">Anyone who reads dashboards</span>
+      <span class="chip time">45 min + self-study depth</span>
+    </div>
+    <div class="agenda">
+      <span class="a1" style="flex:1">0-3 · Welcome</span>
+      <span class="a2" style="flex:4">3-22 · Concepts</span>
+      <span class="a3" style="flex:4">22-40 · Source inventory</span>
+      <span class="a4" style="flex:1">40-45 · Q&amp;A</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ============ INTRO ============ -->
+  <section class="section" id="intro">
+    <div class="section-kicker">
+      <span class="klabel">Part 0</span>
+      <h2>Why this session exists</h2>
+    </div>
+    <p class="lede">Nobody types data into a warehouse. Data is a by-product of business happening: a customer checks out, an ad gets clicked, a partner emails a price list, Stripe settles a payment. Each of those moments gets written down by whichever system witnessed it - and those witnesses are the sources, the farms at the very start of the supply chain. If you can name your sources, you can answer the question that stumps most dashboard readers: "where does this number actually come from?"</p>
+    <div class="legend">
+      <span class="pill solid">Live - covered in session</span>
+      <span class="pill light">Self-study - read after</span>
+      <span class="pill peach">✦ Try it on your own dashboard</span>
+      <span class="pill inkpill">☕ The Daybreak case</span>
+    </div>
+    <div class="callout win">
+      <strong>★ What you walk out with today</strong>
+      The four source families every company's data comes from (you will sort your own systems into them in 20 minutes), a plain-English decode of ingestion and of the tool names Fivetran and Airbyte, and a fair answer to "why isn't our dashboard real-time?" that will make your data team nod.
+    </div>
+    <div class="callout tip">
+      <strong>Remember the map</strong>
+      Session 1 gave you six stages: source, ingest, store, transform, metrics, serve. Today we live inside the first two boxes - the farm and the truck. Everything downstream can only be as good as what gets picked up here.
+    </div>
+  </section>
+
+  <!-- ============ PART 1: THE FOUR SOURCE FAMILIES ============ -->
+  <section class="section" id="source-families">
+    <div class="section-kicker">
+      <span class="klabel">Part 1 · covers the source families</span>
+      <h2>The four families where data is born <span class="tag concept">7 min live</span></h2>
+    </div>
+    <p class="lede">Companies feel like they have a hundred systems, but almost every source falls into one of <strong>four families</strong>: the app's own database, event streams, files, and third-party APIs. Learn the four shapes once and you can inventory any company's data landscape on one page - which is exactly what today's exercise does.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Four source families flowing into one ingest truck and onto the warehouse shelf">
+        <style>
+          .sbT { font: 700 15px Inter, sans-serif; fill: #FFFFFF; }
+          .sbS { font: 400 12px Inter, sans-serif; fill: #64707A; }
+          .sbN { font: 600 14px Inter, sans-serif; fill: #3A2A0E; }
+          .sbA { stroke: #C3CDD6; stroke-width: 2.5; fill: none; marker-end: url(#sbAh); }
+          .sbE { font: 400 20px Inter, sans-serif; }
+        </style>
+        <defs>
+          <marker id="sbAh" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6" fill="none" stroke="#C3CDD6" stroke-width="1.5"/>
+          </marker>
+        </defs>
+        <rect x="20" y="24" width="175" height="52" rx="12" fill="#075985"/>
+        <text class="sbE" x="32" y="57">🛒</text><text class="sbT" x="58" y="59">App database</text>
+        <text class="sbS" x="205" y="48">orders, customers, subscriptions -</text>
+        <text class="sbS" x="205" y="64">Daybreak's checkout writes here</text>
+        <rect x="20" y="92" width="175" height="52" rx="12" fill="#075985"/>
+        <text class="sbE" x="32" y="125">👆</text><text class="sbT" x="58" y="127">Event stream</text>
+        <text class="sbS" x="205" y="116">clicks, taps, page views -</text>
+        <text class="sbS" x="205" y="132">high volume, low ceremony</text>
+        <rect x="20" y="160" width="175" height="52" rx="12" fill="#075985"/>
+        <text class="sbE" x="32" y="193">📁</text><text class="sbT" x="58" y="195">Files</text>
+        <text class="sbS" x="205" y="184">partner CSVs, spreadsheets</text>
+        <text class="sbS" x="205" y="200">people email around</text>
+        <rect x="20" y="228" width="175" height="52" rx="12" fill="#075985"/>
+        <text class="sbE" x="32" y="261">🔌</text><text class="sbT" x="58" y="263">3rd-party APIs</text>
+        <text class="sbS" x="205" y="252">Stripe payments, ad platforms,</text>
+        <text class="sbS" x="205" y="268">support tools</text>
+        <line class="sbA" x1="470" y1="50" x2="583" y2="138"/>
+        <line class="sbA" x1="470" y1="118" x2="583" y2="144"/>
+        <line class="sbA" x1="470" y1="186" x2="583" y2="152"/>
+        <line class="sbA" x1="470" y1="254" x2="583" y2="158"/>
+        <rect x="590" y="116" width="150" height="64" rx="12" fill="#0284C7"/>
+        <text class="sbE" x="604" y="152">🚚</text><text class="sbT" x="630" y="154">Ingest</text>
+        <text class="sbS" x="590" y="200">one scheduled pickup</text>
+        <text class="sbS" x="590" y="216">for all four families</text>
+        <line class="sbA" x1="744" y1="148" x2="758" y2="148"/>
+        <rect x="762" y="116" width="100" height="64" rx="12" fill="#0EA5E9"/>
+        <text class="sbE" x="774" y="152">🏬</text><text class="sbT" x="800" y="154">Shelf</text>
+        <text class="sbS" x="762" y="200">session 3's</text>
+        <text class="sbS" x="762" y="216">cleanup room</text>
+        <rect x="20" y="294" width="14" height="14" rx="3" fill="#C08A3E"/>
+        <text class="sbN" x="44" y="306">Four different farms, one truck - by 2:15am everything sits on the same shelf.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the four source families converging on one overnight pickup</figcaption>
+    </figure>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>A walk through Daybreak's four farms<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Every source at Daybreak - and very likely at your company - is one of these:</p>
+        <ul>
+          <li><strong>The app database</strong> is where the business officially happens. When order #8412 was placed, the checkout app wrote a row: who, what, $42, 11:41pm. Orders, customers, subscriptions all live here. This is the most trusted family - the app itself would break if these records were wrong.</li>
+          <li><strong>Event streams</strong> are the behavioral confetti around the business: every click, tap, page view, and abandoned cart. Enormous volume, low ceremony - a single visitor can generate hundreds of events before buying once. Great for "how do people browse?", never the place you count revenue.</li>
+          <li><strong>Files</strong> are the unglamorous workhorses: the roaster emails a CSV of bean costs, a logistics partner drops a spreadsheet of delivery times. If it arrives as an attachment, it is a file source.</li>
+          <li><strong>Third-party APIs</strong> are other companies' systems that hold your data: Stripe knows the payments, the ad platforms know the campaign spend, the support tool knows the complaints. You do not own these databases - you ask politely through an API, which is just a service window for software.</li>
+        </ul>
+        <table class="clean">
+          <tr><th>Family</th><th>Daybreak example</th><th>What it is good for</th></tr>
+          <tr><td>App database</td><td>orders, customers, subscriptions</td><td>counting the business - revenue is born here</td></tr>
+          <tr><td>Event stream</td><td>site clicks, taps, cart events</td><td>behavior - how people browse before buying</td></tr>
+          <tr><td>Files</td><td>the roaster's bean-cost CSV</td><td>partner data with no better door in</td></tr>
+          <tr><td>3rd-party APIs</td><td>Stripe, ad platforms, support tool</td><td>facts other companies hold on your behalf</td></tr>
+        </table>
+        <div class="callout example"><span class="ex-pill">Real world</span>This four-way split is exactly how DataCamp's "Understanding Data Engineering" and DeepLearning.AI's source-systems course carve up the world - databases, files, streams, and external services. Different labels, same four farms. You now recognize the taxonomy the professionals use.</div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>The fragile source: the human-maintained spreadsheet<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>There is a fifth thing you will find in every inventory, and it deserves its own warning label: <strong>the spreadsheet a human fills in by hand</strong>. Regional targets someone updates monthly, a price list marketing "keeps current", a tab of store openings. Technically it is a file source. Practically it is the least reliable source in the building: no system witnessed the facts, a typo looks identical to a truth, columns get renamed on a whim, and the one person who understands it goes on holiday.</p>
+        <p>The point is not to mock it - sometimes a hand-kept sheet is genuinely the only home a fact has (targets and budgets are <em>decisions</em>, not events, so no app records them). The point is to <strong>flag it</strong>: when a dashboard number looks odd, the hand-maintained source is the first suspect, because it is the only farm with no machinery guaranteeing what got planted. Today's exercise asks you to mark yours with a warning flag.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 2: THE OVERNIGHT PICKUP ============ -->
+  <section class="section" id="overnight-pickup">
+    <div class="section-kicker">
+      <span class="klabel">Part 2 · covers ingestion</span>
+      <h2>The overnight pickup <span class="tag concept">6 min live</span></h2>
+    </div>
+    <p class="lede">Ingestion is the least mysterious word in the pipeline: it means <strong>a scheduled copy</strong>. At 2:00am, a job wakes up, visits each source, copies out what is new, and drops it on the warehouse shelf. That is the whole idea. The interesting parts are the two design choices hiding inside "copies out what is new".</p>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Full copy, incremental copy, and the pre-built truck<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Choice one: <strong>how much to haul</strong>. A <em>full copy</em> re-hauls the entire order history every night - simple, bulletproof, and increasingly slow as history grows. An <em>incremental copy</em> takes only new and changed rows since the last pickup - the design choice we spotted in session 1's 2am stop. Nearly every mature pipeline goes incremental, which quietly creates a new job: deciding what counts as "changed". That decision is invisible until the night it is wrong.</p>
+        <p>Choice two: <strong>who builds the truck</strong>. Copying data out of Stripe correctly - payments, refunds, disputes, currency quirks - is fiddly work, and thousands of companies need the exact same truck. So companies exist that sell pre-built ones:</p>
+        <ul>
+          <li><strong>Fivetran</strong> - decoded: a company selling ready-made pickup trucks for hundreds of common sources. You point it at Stripe and your warehouse; the copying, scheduling, and retrying is their problem.</li>
+          <li><strong>Airbyte</strong> - decoded: the same job, with an open-source flavor teams can run and modify themselves.</li>
+        </ul>
+        <div class="callout example"><span class="ex-pill">Real world</span>This is why nobody hand-builds a Stripe pickup anymore. In the modern data stack's standard layer map, Fivetran and Airbyte ARE the ingestion layer - the named trucks between the sources and the warehouse. When you hear those names in a meeting, the sentence being spoken is just "the truck".</div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>What happens when the farm changes shape<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>One quiet danger to file away: the truck's route assumes the farm stays where it was. If Daybreak's app team renames a column, drops a field, or changes what "order status" can say, the 2am pickup may keep running and happily deliver something subtly different - or nothing at all - without anyone shouting. This is called a <strong>schema change</strong>, it starts at the source, and it is the single most common way pipelines break. Session 5 is where we watch it happen and learn how teams catch it. For now, just remember: the farm can move, and the truck will not always notice.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 3: BATCH VS STREAMING ============ -->
+  <section class="section" id="batch-streaming">
+    <div class="section-kicker">
+      <span class="klabel">Part 3 · covers the freshness tradeoff</span>
+      <h2>Batch vs streaming: the milk run and the conveyor belt <span class="tag concept">6 min live</span></h2>
+    </div>
+    <p class="lede">"Why isn't our dashboard real-time?" is the most common question data teams field, and it has a genuinely good answer. There are two ways to run the pickup: <strong>batch</strong>, the scheduled milk run, and <strong>streaming</strong>, the always-moving conveyor belt. They are not good versus bad - they are cheap-and-calm versus expensive-and-instant.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Batch as a scheduled milk run compared with streaming as a continuous conveyor belt">
+        <style>
+          .bsH { font: 700 14px Inter, sans-serif; fill: #1C2B36; }
+          .bsW { font: 700 12px Inter, sans-serif; fill: #FFFFFF; }
+          .bsS { font: 400 12px Inter, sans-serif; fill: #64707A; }
+          .bsN { font: 600 14px Inter, sans-serif; fill: #3A2A0E; }
+          .bsA { stroke: #C3CDD6; stroke-width: 2.5; fill: none; marker-end: url(#bsAh); }
+        </style>
+        <defs>
+          <marker id="bsAh" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6" fill="none" stroke="#C3CDD6" stroke-width="1.5"/>
+          </marker>
+        </defs>
+        <text class="bsH" x="20" y="36">🚚 Batch - the milk run (Daybreak's choice)</text>
+        <rect x="20" y="48" width="840" height="64" rx="12" fill="#E8F5FD"/>
+        <line class="bsA" x1="50" y1="80" x2="830" y2="80"/>
+        <rect x="150" y="66" width="56" height="28" rx="6" fill="#0284C7"/>
+        <text class="bsW" x="158" y="84">2:00am</text>
+        <rect x="420" y="66" width="56" height="28" rx="6" fill="#0284C7"/>
+        <text class="bsW" x="428" y="84">2:00am</text>
+        <rect x="690" y="66" width="56" height="28" rx="6" fill="#0284C7"/>
+        <text class="bsW" x="698" y="84">2:00am</text>
+        <text class="bsS" x="50" y="106">one big load per run, quiet roads in between - often nightly or hourly</text>
+        <text class="bsH" x="20" y="148">🎢 Streaming - the conveyor belt</text>
+        <rect x="20" y="160" width="840" height="64" rx="12" fill="#F8F0E1"/>
+        <line class="bsA" x1="50" y1="192" x2="830" y2="192"/>
+        <circle cx="80" cy="192" r="5" fill="#0EA5E9"/><circle cx="120" cy="192" r="5" fill="#0EA5E9"/>
+        <circle cx="160" cy="192" r="5" fill="#0EA5E9"/><circle cx="200" cy="192" r="5" fill="#0EA5E9"/>
+        <circle cx="240" cy="192" r="5" fill="#0EA5E9"/><circle cx="280" cy="192" r="5" fill="#0EA5E9"/>
+        <circle cx="320" cy="192" r="5" fill="#0EA5E9"/><circle cx="360" cy="192" r="5" fill="#0EA5E9"/>
+        <circle cx="400" cy="192" r="5" fill="#0EA5E9"/><circle cx="440" cy="192" r="5" fill="#0EA5E9"/>
+        <circle cx="480" cy="192" r="5" fill="#0EA5E9"/><circle cx="520" cy="192" r="5" fill="#0EA5E9"/>
+        <circle cx="560" cy="192" r="5" fill="#0EA5E9"/><circle cx="600" cy="192" r="5" fill="#0EA5E9"/>
+        <circle cx="640" cy="192" r="5" fill="#0EA5E9"/><circle cx="680" cy="192" r="5" fill="#0EA5E9"/>
+        <circle cx="720" cy="192" r="5" fill="#0EA5E9"/><circle cx="760" cy="192" r="5" fill="#0EA5E9"/>
+        <text class="bsS" x="50" y="218">events arrive one by one, seconds after they happen - the belt never stops</text>
+        <rect x="20" y="252" width="14" height="14" rx="3" fill="#C08A3E"/>
+        <text class="bsN" x="44" y="264">Streaming is powerful and pricier - earn it with fraud checks or live ops, not a Monday dashboard.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the milk run and the conveyor belt, side by side</figcaption>
+    </figure>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>When the conveyor belt earns its cost<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p><strong>Batch</strong> means scheduled runs - the truck departs at set times, hauls everything that accumulated, and rests. In practice that schedule is often nightly or hourly, tuned to what the business actually needs. It is simpler to build, cheaper to run, and easier to fix, because there are quiet hours between runs when nothing is moving.</p>
+        <p><strong>Streaming</strong> means continuous - each event rides the belt within seconds of happening. That immediacy costs real money and real engineering: the belt never stops, so neither can the people responsible for it. The honest test is a single question: <em>would a decision change if this number were seconds fresh instead of hours fresh?</em></p>
+        <ul>
+          <li><strong>Yes, stream it:</strong> fraud detection (a stolen card must be blocked mid-purchase, not tomorrow), live operations like delivery tracking or inventory that sells out in minutes.</li>
+          <li><strong>No, batch is honestly fine:</strong> the Monday revenue dashboard. Daybreak's executives read it at 9am with coffee; whether order #8412 arrived at 2:15am or 2:15pm Sunday changes nothing they decide. Daybreak runs batch, and should.</li>
+        </ul>
+        <table class="clean">
+          <tr><th></th><th>Batch - the milk run</th><th>Streaming - the conveyor belt</th></tr>
+          <tr><td>Freshness</td><td>hours - often nightly or hourly</td><td>seconds</td></tr>
+          <tr><td>Cost and effort</td><td>lower - quiet hours between runs</td><td>higher - the belt never stops</td></tr>
+          <tr><td>Fixing problems</td><td>calmer - patch, then re-run the batch</td><td>harder - repairs happen on a moving belt</td></tr>
+          <tr><td>Earns its keep for</td><td>daily dashboards, weekly reports</td><td>fraud checks, live operations</td></tr>
+        </table>
+        <div class="callout example"><span class="ex-pill">Real world</span>AWS's own definition of batch processing is exactly this shape: jobs that run on a schedule, processing accumulated data in groups - with no universal law about how often. When a vendor tells you everything must be real-time, remember that the biggest cloud on earth still describes the milk run as a first-class pattern.</div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>How to answer "why isn't it real-time?" kindly<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>A script for the meeting where this comes up: "It could be - streaming is a real option. It costs meaningfully more to build and to keep healthy, so the question is which decision we would make differently with second-fresh numbers. If we can name one, let's take it to the data team. If we can't, the overnight batch is giving us the same decisions for a fraction of the cost." This reframes the conversation from <em>speed as status</em> to <em>freshness as a purchase</em> - and data teams will love you for it. Session 4 picks this thread up when we talk about what freshness each consumer of the pipeline actually needs.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ DEMO ============ -->
+  <section class="section" id="demo">
+    <div class="section-kicker">
+      <span class="klabel">Everyone works</span>
+      <h2>Inventory your sources 🗺️ <span class="tag demo">★ 18 min · everyone works</span></h2>
+    </div>
+    <p class="lede">Notebook exercise, no laptop needed. You are going to draw the left edge of your company's pipeline map - the farms. Most people have never seen their own data landscape on one page, and it takes about fifteen minutes to fix that.</p>
+    <div class="steps">
+      <div class="step"><p><strong>List every system where business happens.</strong> Where do sales get recorded? Where do customers click? What arrives as email attachments? Which outside services hold your money, your ads, your support tickets? Brain-dump first, tidy later - aim for eight to fifteen systems.</p></div>
+      <div class="step"><p><strong>Sort them into the four families.</strong> App database, event stream, file, or third-party API. When unsure, ask "did a system witness this, or did a human type it?" and "do we own the database, or do we ask through a service window?"</p></div>
+      <div class="step"><p><strong>Star the ones feeding your main dashboard.</strong> Usually two to four sources carry the numbers you actually look at weekly. The stars are your dashboard's true parents.</p></div>
+      <div class="step"><p><strong>Flag every human-maintained spreadsheet</strong> with a warning mark. Targets, price lists, hand-kept trackers. Each flag is a fragile farm - the first suspect the next time a number looks odd.</p></div>
+      <div class="step"><p><strong>Guess each starred source's pickup schedule.</strong> Overnight batch? Hourly? Continuous? Look for "last updated" stamps on the dashboards they feed - the stamp is the truck's timetable, printed in public.</p></div>
+      <div class="step"><p><strong>Ask the streaming question.</strong> For each starred source: would any decision change if this were seconds fresh? Write yes or no. Most honest inventories come back nearly all no - which is a finding, not a failure.</p></div>
+    </div>
+    <div class="callout tip">
+      <strong>✦ If you finish early</strong>
+      Pick your most-flagged fragile source and draft the one-line question you would ask its owner: "what happens to the dashboard if this sheet is late or wrong?" You are two sessions early to the freshness lesson, and it shows.
+    </div>
+  </section>
+
+  <!-- ============ EXERCISE ============ -->
+  <section class="section" id="exercise">
+    <div class="section-kicker">
+      <span class="klabel">Before next session</span>
+      <h2>Homework 📝 <span class="tag exercise">◐ 20 minutes</span></h2>
+    </div>
+    <ul>
+      <li><strong>Finish your source inventory</strong> if the session ran short, and keep it next to session 1's napkin - together they are the left half of your company's pipeline map.</li>
+      <li><strong>Find one file source in the wild this week</strong> - a CSV or spreadsheet that arrives by email and ends up inside a number somewhere. Note who sends it and who would notice if it stopped.</li>
+      <li><strong>Listen for the truck names.</strong> If Fivetran, Airbyte, or "connector" comes up in a meeting or job post this week, enjoy knowing the sentence just means "the scheduled pickup". Park any other tool names for session 6's decoder table.</li>
+    </ul>
+  </section>
+
+  <!-- ============ QUIZ ============ -->
+  <section class="section" id="quiz">
+    <div class="section-kicker">
+      <span class="klabel">Check yourself</span>
+      <h2>Three questions before you go 🎯 <span class="tag exercise">◐ 90 seconds</span></h2>
+    </div>
+    <div class="quiz-q" data-answer="1">
+      <p class="qtext">1 · The four families where data is born are...</p>
+      <button class="qopt" type="button">A · dashboards, warehouses, spreadsheets, emails</button>
+      <button class="qopt" type="button">B · app databases, event streams, files, third-party APIs</button>
+      <button class="qopt" type="button">C · batch sources, streaming sources, cloud sources, local sources</button>
+      <p class="qwhy">The farm taxonomy: the app's own database (orders, customers), event streams (clicks and taps), files (CSVs people email), and third-party APIs (Stripe, ad platforms). Option A lists downstream stops, and option C describes pickup styles, not birthplaces.</p>
+    </div>
+    <div class="quiz-q" data-answer="2">
+      <p class="qtext">2 · The fairest one-line summary of batch versus streaming is...</p>
+      <button class="qopt" type="button">A · streaming is the modern way; batch is legacy technology</button>
+      <button class="qopt" type="button">B · batch is more accurate; streaming loses data</button>
+      <button class="qopt" type="button">C · streaming buys freshness at real cost; batch is honestly fine for a daily dashboard</button>
+      <p class="qwhy">Neither is legacy and neither is sloppier - they trade money and complexity for freshness. Fraud detection earns the conveyor belt; the Monday 9am dashboard does not, which is why Daybreak runs the milk run and should.</p>
+    </div>
+    <div class="quiz-q" data-answer="0">
+      <p class="qtext">3 · Fivetran and Airbyte are best described as...</p>
+      <button class="qopt" type="button">A · companies selling pre-built pickup trucks for hundreds of common sources</button>
+      <button class="qopt" type="button">B · databases where the cleaned data is stored</button>
+      <button class="qopt" type="button">C · dashboard tools that display the finished metrics</button>
+      <p class="qwhy">They live in the ingest box: ready-made connectors that copy data out of Stripe, Shopify, ad platforms and hundreds more, on a schedule, so nobody hand-builds the same truck twice. Storage is the warehouse's job; display is the serve stage.</p>
+    </div>
+    <p class="quiz-score"></p>
+  </section>
+
+  <!-- ============ SOURCES COVERED ============ -->
+  <section class="section" id="official">
+    <div class="section-kicker">
+      <span class="klabel">Coverage, honestly</span>
+      <h2>What this session covered from the official universe</h2>
+    </div>
+    <div class="covered">
+      <div class="covered-row"><span class="status pill light">◐</span><span class="name">DeepLearning.AI Data Engineering - course 2 (Source Systems, Ingestion)</span><span class="note">source families and ingestion introduced in plain English - the technical depth stays with DLAI</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">DataCamp Understanding Data Engineering - ch 3</span><span class="note">moving data, batch vs streaming, scheduling - taught to the 80% bar for this audience</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">AWS batch-processing definition</span><span class="note">scheduled runs on accumulated data, "often nightly or hourly" - no universal cadence claimed</span></div>
+    </div>
+    <p>Certificates, videos, and graded assessments stay with the official providers - this course teaches the working core in plain English. Full source map in the repo's <em>materials/official-course-map.md</em>.</p>
+  </section>
+
+  <!-- ============ CHEAT SHEET ============ -->
+  <section class="cheat" id="cheatsheet">
+    <h3>Session 2 cheat sheet</h3>
+    <div class="grid-2">
+      <div class="cheat-item"><b>Data is a by-product</b><span>Nobody types data into a warehouse. Business happens; systems write it down as a side effect. Those witnesses are the sources.</span></div>
+      <div class="cheat-item"><b>The four families</b><span>App database (orders) · event streams (clicks) · files (emailed CSVs) · third-party APIs (Stripe, ads). Every source fits one.</span></div>
+      <div class="cheat-item"><b>The fragile source</b><span>A human-maintained spreadsheet is a source too - the least reliable kind. Flag it; it is the first suspect when numbers look odd.</span></div>
+      <div class="cheat-item"><b>Ingestion, decoded</b><span>A scheduled copy. At 2am a job visits each source, copies what is new, drops it on the shelf. That is the whole idea.</span></div>
+      <div class="cheat-item"><b>Full vs incremental</b><span>Re-haul everything vs only new-and-changed rows. Incremental wins at scale, and quietly creates the "what counts as changed?" decision.</span></div>
+      <div class="cheat-item"><b>Fivetran / Airbyte</b><span>Companies selling pre-built pickup trucks for hundreds of common sources - so nobody hand-builds a Stripe pickup again.</span></div>
+      <div class="cheat-item"><b>Batch = milk run</b><span>Scheduled runs, often nightly or hourly. Cheaper, calmer, honestly fine for the Monday dashboard. Daybreak's choice.</span></div>
+      <div class="cheat-item"><b>Streaming = conveyor belt</b><span>Continuous, seconds fresh, costs real money. Earn it with fraud detection or live ops - not with a dashboard read once a day.</span></div>
+    </div>
+  </section>
+
+  <footer class="pagefoot">
+    <span>Session 2 of 6 · learn-data-pipelines-with-phoebe · by Phoebe Fu &nbsp;·&nbsp; 📚 <a href="https://phoebefu6.github.io/learn-with-phoebe/">Learn with Phoebe ↗</a></span>
+    <span><a href="01-follow-the-order.html">← Prev: Follow the order</a> &nbsp;·&nbsp; <a href="03-the-cleanup-room.html">Next: The cleanup room →</a></span>
+  </footer>
+
+</main>
+
+<script src="../assets/app.js?v=1"></script>
+</body>
+</html>

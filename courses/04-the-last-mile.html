@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Session 4 · The last mile: dashboards, definitions, and who eats the data - learn data pipelines with phoebe</title>
+<link rel="stylesheet" href="../assets/style.css?v=1">
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="wrap">
+    <span class="crumb"><a href="../index.html">learn-data-pipelines-with-phoebe</a> / Session 4 of 6</span>
+    <button class="btn" id="toggle-all" type="button">Expand all</button>
+    <button class="btn primary" id="zoom-toggle" type="button">Projector zoom: off</button>
+  </div>
+</div>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="eyebrow">Learn Data Pipelines with Phoebe · Session 4 of 6</div>
+    <h1>The last mile: dashboards, definitions, and <span class="accent">who eats the data</span></h1>
+    <p class="sub">By 6:05am the pipeline has done everything right - picked up, shelved, cleaned, counted - and none of it matters yet. The last mile is where all that overnight work either becomes a decision or becomes wallpaper. Today: the five consumers of ready data, why the metrics stage is really a stack of human decisions wearing numbers, and the shift supervisor that makes the 2am truck leave before the 4:30 cleanup.</p>
+    <div class="chip-row">
+      <span class="chip level">🟡 Building</span>
+      <span class="chip audience">No code, no jargon</span>
+      <span class="chip audience">Anyone who reads dashboards</span>
+      <span class="chip time">45 min + self-study depth</span>
+    </div>
+    <div class="agenda">
+      <span class="a1" style="flex:1">0-3 · Welcome</span>
+      <span class="a2" style="flex:4">3-22 · Concepts</span>
+      <span class="a3" style="flex:4">22-40 · Read like a pro</span>
+      <span class="a4" style="flex:1">40-45 · Q&amp;A</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ============ INTRO ============ -->
+  <section class="section" id="intro">
+    <div class="section-kicker">
+      <span class="klabel">Part 0</span>
+      <h2>Why this session exists</h2>
+    </div>
+    <p class="lede">Sessions 2 and 3 were about machinery: trucks, shelves, the cleanup room. The last mile is different - it is a people problem wearing a technology costume. The hardest questions here are not "which tool?" but "who needs this, how fresh, and what exactly does the number mean?" Get those wrong and a technically perfect pipeline delivers beautifully punctual numbers that nobody trusts and nobody opens.</p>
+    <div class="legend">
+      <span class="pill solid">Live - covered in session</span>
+      <span class="pill light">Self-study - read after</span>
+      <span class="pill peach">✦ Try it on your own dashboard</span>
+      <span class="pill inkpill">☕ The Daybreak case</span>
+    </div>
+    <div class="callout win">
+      <strong>★ What you walk out with today</strong>
+      The five consumers of ready data and their very different freshness appetites, the realization that every metric definition is a human decision you are allowed to question, and the plain-English decode of Airflow - the name you have overheard most and understood least.
+    </div>
+    <div class="callout tip">
+      <strong>Where we are on the map</strong>
+      Order #8412 is cleaned and counted: $42 sitting inside Sunday's revenue. Today we walk the final stretch - metrics and serve, the last two boxes on your napkin - and meet the schedule that made every earlier stop happen in the right order.
+    </div>
+  </section>
+
+  <!-- ============ PART 1: WHO EATS THE DATA ============ -->
+  <section class="section" id="who-eats">
+    <div class="section-kicker">
+      <span class="klabel">Part 1 · covers the consumers</span>
+      <h2>Who eats the data <span class="tag concept">6 min live</span></h2>
+    </div>
+    <p class="lede">Ask most people what a pipeline feeds and they say "the dashboard". True - and incomplete. The same cleaned, counted tables feed <strong>five different mouths</strong>, and each mouth has its own freshness appetite. Serving well is matching the shelf to the appetite, not making everything real-time by reflex.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 470" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="One ready-data shelf fanning out to five consumers, each with its own freshness appetite">
+        <style>
+          .lmT { font: 700 14px Inter, sans-serif; fill: #FFFFFF; }
+          .lmS { font: 400 12px Inter, sans-serif; fill: #64707A; }
+          .lmN { font: 600 14px Inter, sans-serif; fill: #3A2A0E; }
+          .lmA { stroke: #C3CDD6; stroke-width: 2.5; fill: none; marker-end: url(#lmAh); }
+          .lmE { font: 400 18px Inter, sans-serif; }
+        </style>
+        <defs>
+          <marker id="lmAh" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6" fill="none" stroke="#C3CDD6" stroke-width="1.5"/>
+          </marker>
+        </defs>
+        <rect x="30" y="200" width="170" height="70" rx="12" fill="#075985"/>
+        <text class="lmE" x="46" y="242">🍽</text><text class="lmT" x="76" y="240">Ready data</text>
+        <text class="lmS" x="30" y="294">cleaned + counted -</text>
+        <text class="lmS" x="30" y="310">one shelf for all five</text>
+        <line class="lmA" x1="200" y1="220" x2="324" y2="52"/>
+        <line class="lmA" x1="200" y1="228" x2="324" y2="138"/>
+        <line class="lmA" x1="200" y1="235" x2="324" y2="225"/>
+        <line class="lmA" x1="200" y1="242" x2="324" y2="312"/>
+        <line class="lmA" x1="200" y1="250" x2="324" y2="398"/>
+        <rect x="330" y="26" width="180" height="50" rx="10" fill="#0284C7"/>
+        <text class="lmE" x="342" y="58">📊</text><text class="lmT" x="370" y="57">Dashboards</text>
+        <text class="lmS" x="530" y="46">the famous one - a day old is</text>
+        <text class="lmS" x="530" y="62">fine; Monday 9am reads Sunday</text>
+        <rect x="330" y="112" width="180" height="50" rx="10" fill="#0284C7"/>
+        <text class="lmE" x="342" y="144">📧</text><text class="lmT" x="370" y="143">Reports + emails</text>
+        <text class="lmS" x="530" y="132">scheduled sends - freshness</text>
+        <text class="lmS" x="530" y="148">measured in days, not minutes</text>
+        <rect x="330" y="199" width="180" height="50" rx="10" fill="#C08A3E"/>
+        <text class="lmE" x="342" y="231">🚨</text><text class="lmT" x="370" y="230">Alerts</text>
+        <text class="lmS" x="530" y="219">data that pokes YOU - a fraud</text>
+        <text class="lmS" x="530" y="235">alert is useless a day old</text>
+        <rect x="330" y="286" width="180" height="50" rx="10" fill="#0EA5E9"/>
+        <text class="lmE" x="342" y="318">🔌</text><text class="lmT" x="370" y="317">Other tools</text>
+        <text class="lmS" x="530" y="306">the finance model pulls the</text>
+        <text class="lmS" x="530" y="322">same tables on its own clock</text>
+        <rect x="330" y="372" width="180" height="50" rx="10" fill="#0EA5E9"/>
+        <text class="lmE" x="342" y="404">🤖</text><text class="lmT" x="370" y="403">AI / ML models</text>
+        <text class="lmS" x="530" y="392">Daybreak's churn predictor</text>
+        <text class="lmS" x="530" y="408">eats the same cleaned tables</text>
+        <rect x="30" y="436" width="14" height="14" rx="3" fill="#C08A3E"/>
+        <text class="lmN" x="54" y="448">One shelf feeds five mouths - each with its own freshness appetite. Serving = matching the two.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - one ready-data shelf, five consumers, five freshness appetites</figcaption>
+    </figure>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>Five mouths, five appetites<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Walk the fan-out with Daybreak's own shelf:</p>
+        <ul>
+          <li><strong>Dashboards</strong> - the famous consumer. The Monday revenue view is read at 9am about a weekend that already happened; data a few hours old is completely fine.</li>
+          <li><strong>Scheduled reports and emails</strong> - the weekly numbers that arrive in an inbox. Freshness appetite: days. Nobody re-checks Tuesday's email on Wednesday.</li>
+          <li><strong>Alerts</strong> - the one consumer that reverses the direction. Instead of you visiting the data, the data pokes YOU when something crosses a line. Appetite: minutes to hours. A fraud alert that arrives a day late is not an alert, it is a memo.</li>
+          <li><strong>Other tools pulling data</strong> - the finance team's planning model pulls the cleaned order tables straight from the shelf. No screen involved; the consumer is another system.</li>
+          <li><strong>AI and ML models</strong> - increasingly the biggest eater. Daybreak's churn predictor trains on the same cleaned tables the dashboard reads. Bad shelf, bad predictions - the pipeline you learned this week is also the AI's kitchen.</li>
+        </ul>
+        <p>The practical takeaway: <strong>"how fresh does it need to be?" has no single answer</strong> - it has one answer per consumer. Asking for "real-time everything" is like demanding same-hour delivery on furniture: possible, expensive, and usually pointless.</p>
+        <div class="callout example"><span class="ex-pill">Real world</span>The industry textbook spine agrees: its serving stage explicitly covers analytics AND machine learning as destinations - the dashboard and the model are two mouths at the same table. That is why AI projects stall at companies with messy pipelines: the model eats from the same shelf you do.</div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Dashboard adoption - the quiet graveyard<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>The best pipeline in the world loses to a number nobody opens. Every company has a dashboard graveyard: views built with care, refreshed punctually every night, opened by no one since the quarter they launched. The machinery did nothing wrong - the last mile failed as a <em>people</em> problem: wrong metric, wrong audience, wrong moment, or simply nobody's habit.</p>
+        <p>Three honest signs a dashboard is alive: someone would notice within a day if it broke, a recurring meeting opens with it, and at least one person can name the decision it feeds. Zero out of three? It is wallpaper. When you audit your own dashboards in the demo, ask which of yours pass.</p>
+      </div>
+    </details>
+
+    <div class="callout tip">
+      <strong>✦ Try it before the demo</strong>
+      List every way data reached you this week: dashboards you visited, emails that arrived, alerts that pinged, files another tool produced. Sort them into the five mouths. Most people discover they are three consumer types at once - with three different freshness needs they never stated out loud.
+    </div>
+  </section>
+
+  <!-- ============ PART 2: METRICS ARE DECISIONS ============ -->
+  <section class="section" id="metrics-decisions">
+    <div class="section-kicker">
+      <span class="klabel">Part 2 · covers the metrics stage</span>
+      <h2>Metrics are decisions wearing numbers <span class="tag concept">8 min live</span></h2>
+    </div>
+    <p class="lede">Stage five is the strangest stop on the floor, because nothing mechanical happens there. The metrics stage is where <strong>humans encode judgment</strong>: "revenue = gross minus refunds, counted at shipment" looks like arithmetic, but every word of it is a DECISION someone made - not a fact of nature. This is the stage you, a non-builder, are most qualified to interrogate.</p>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Order #8412 meets three human decisions<span class="mini">5 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Watch the $42 gift bundle hit stage five and force three choices that no computer can make:</p>
+        <ul>
+          <li><strong>What bucket?</strong> Is a gift bundle "subscription revenue" or "one-time revenue"? Daybreak's growth team wants it in subscriptions (gifts convert to subscribers); finance wants it one-time (no recurring contract). Both are defensible. Someone has to pick, write it down, and live with it.</li>
+          <li><strong>Counted when?</strong> At purchase (11:41pm Sunday), or at shipment (Tuesday)? Sunday's revenue number changes depending on the answer - same order, same $42, different day.</li>
+          <li><strong>What about the refund?</strong> On Tuesday the recipient's address bounces and the order is refunded. Does that refund <em>restate</em> Sunday's number (Sunday quietly shrinks by $42 after everyone already saw it), or does it land as a negative on Tuesday? Restatement keeps history "true" but makes numbers people quoted change under their feet. Counting on Tuesday keeps history stable but means Sunday was, strictly, wrong forever. Companies pick one - and most dashboard readers never learn which.</li>
+        </ul>
+        <p>Remember session 1's quiz: two departments, two "yesterday's revenue" numbers, both pipelines healthy. Now you can name the crime scene precisely - <strong>different definitions bolted on at stage five</strong>. The machinery below was identical; the judgment on top was not.</p>
+        <div class="callout example"><span class="ex-pill">Real world</span>Daybreak's version of the classic fight: growth reported the gift-bundle promo as a subscription-revenue win, finance reported flat subscriptions the same week. Two healthy pipelines, one $42 order, two truths. The meeting that resolved it did not touch a single tool - it produced a sentence: "gift bundles count as one-time revenue, counted at shipment, refunds restate."</div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>What a dictionary entry looks like<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>The whole cure fits in one row that anyone in the company can read:</p>
+        <table class="clean">
+          <tr><th>Metric</th><th>Definition sentence</th><th>Counted when</th><th>Refunds</th><th>Owner</th></tr>
+          <tr><td>Revenue (daily)</td><td>Gross order value minus refunds, gift bundles counted as one-time</td><td>At shipment</td><td>Restate the original day</td><td>Head of Finance</td></tr>
+        </table>
+        <p>Boring on purpose. Every column answers a fight before it happens: the bucket fight, the counting-moment fight, the restatement fight, and the "who decided this?" fight. When Daybreak's growth and finance teams finally agreed on the sentence above, neither pipeline changed - only the arguments stopped. That is the metrics stage working.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>The fix is social: a metric dictionary with owners<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>The cure for definition drift is embarrassingly low-tech: <strong>a written metric dictionary everyone can read</strong>, and <strong>one named owner per metric</strong>. The dictionary entry is just your definition sentence with the blanks filled: what is included, what is subtracted, counted when, restated or not. The owner is the person allowed to change the sentence - and obliged to announce it when they do.</p>
+        <p>Notice what this is not: it is not a tool purchase. Teams sometimes buy software hoping it will settle definitions for them; software can <em>store</em> the sentence, but a human still has to write it. If your company has a dashboard but no dictionary, you have numbers without meanings - and now you know exactly what to ask for.</p>
+        <p>Your move as a reader: for any metric you rely on, ask "where is the written definition, and who owns it?" A good data team lights up at this question. A shrug is itself an answer - and session 6 teaches you how to escalate it politely.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 3: THE SCHEDULE ============ -->
+  <section class="section" id="schedule">
+    <div class="section-kicker">
+      <span class="klabel">Part 3 · covers orchestration</span>
+      <h2>The schedule that runs the floor <span class="tag concept">6 min live</span></h2>
+    </div>
+    <p class="lede">One puzzle remains from order #8412's night. The 2:00am truck must leave BEFORE the 4:30 cleanup, which must finish BEFORE the 5:45 counting, which must finish before the 6:05 refresh. Who enforces that order? Not a person - a piece of software whose name you have definitely overheard: <strong>Airflow</strong> (and its younger colleague <strong>Dagster</strong>). Plain-English job description: <strong>the shift supervisor with a clipboard</strong>.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 430" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The overnight dependency chain as a supervisor's clipboard checklist from 2:00am to 6:05am">
+        <style>
+          .scT { font: 700 14px Inter, sans-serif; fill: #1C2B36; }
+          .scC { font: 800 13px Inter, sans-serif; fill: #0284C7; }
+          .scX { font: 400 13px Inter, sans-serif; fill: #1C2B36; }
+          .scS { font: 400 12px Inter, sans-serif; fill: #64707A; }
+          .scN { font: 600 14px Inter, sans-serif; fill: #3A2A0E; }
+          .scA { stroke: #C3CDD6; stroke-width: 2.5; fill: none; marker-end: url(#scAh); }
+          .scK { font: 700 13px Inter, sans-serif; fill: #0284C7; }
+        </style>
+        <defs>
+          <marker id="scAh" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6" fill="none" stroke="#C3CDD6" stroke-width="1.5"/>
+          </marker>
+        </defs>
+        <rect x="40" y="36" width="600" height="330" rx="14" fill="#F8F0E1"/>
+        <rect x="290" y="22" width="100" height="26" rx="8" fill="#C08A3E"/>
+        <text class="scT" x="70" y="78">Daybreak overnight run - do in order</text>
+        <rect x="70" y="98" width="18" height="18" rx="4" fill="#FFFFFF" stroke="#C3CDD6"/>
+        <text class="scK" x="73" y="112">✓</text>
+        <text class="scC" x="104" y="112">2:00</text>
+        <text class="scX" x="150" y="112">Pickup - copy new orders out of the app</text>
+        <line class="scA" x1="79" y1="122" x2="79" y2="140"/>
+        <rect x="70" y="148" width="18" height="18" rx="4" fill="#FFFFFF" stroke="#C3CDD6"/>
+        <text class="scK" x="73" y="162">✓</text>
+        <text class="scC" x="104" y="162">2:15</text>
+        <text class="scX" x="150" y="162">Land raw - shelve the untouched copy</text>
+        <line class="scA" x1="79" y1="172" x2="79" y2="190"/>
+        <rect x="70" y="198" width="18" height="18" rx="4" fill="#FFFFFF" stroke="#C3CDD6"/>
+        <text class="scK" x="73" y="212">✓</text>
+        <text class="scC" x="104" y="212">4:30</text>
+        <text class="scX" x="150" y="212">Clean - dedupe, drop tests, join refunds</text>
+        <line class="scA" x1="79" y1="222" x2="79" y2="240"/>
+        <rect x="70" y="248" width="18" height="18" rx="4" fill="#FFFFFF" stroke="#C3CDD6"/>
+        <text class="scK" x="73" y="262">✓</text>
+        <text class="scC" x="104" y="262">5:45</text>
+        <text class="scX" x="150" y="262">Count - apply the metric definitions</text>
+        <line class="scA" x1="79" y1="272" x2="79" y2="290"/>
+        <rect x="70" y="298" width="18" height="18" rx="4" fill="#FFFFFF" stroke="#C3CDD6"/>
+        <text class="scK" x="73" y="312">✓</text>
+        <text class="scC" x="104" y="312">6:05</text>
+        <text class="scX" x="150" y="312">Refresh - the dashboard reads new tables</text>
+        <path d="M672,150 h12 v160 h-12" stroke="#7DD3FC" stroke-width="3" fill="none"/>
+        <text class="scS" x="700" y="200">waits for: each step</text>
+        <text class="scS" x="700" y="216">runs only after the</text>
+        <text class="scS" x="700" y="232">ones above it finish -</text>
+        <text class="scS" x="700" y="248">if 4:30 runs late,</text>
+        <text class="scS" x="700" y="264">5:45 and 6:05 wait</text>
+        <rect x="40" y="394" width="14" height="14" rx="3" fill="#C08A3E"/>
+        <text class="scN" x="64" y="406">"The dashboard refreshes at 6:05" means: the chain that started at 2:00 finished on time.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the overnight run as a clipboard checklist, each step waiting for the one above</figcaption>
+    </figure>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Airflow decoded, and the word DAG in plain words<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>An orchestrator like Airflow or Dagster does three unglamorous, essential things:</p>
+        <ul>
+          <li><strong>Starts tasks on schedule</strong> - the 2:00am pickup fires because the clipboard says 2:00am, not because anyone is awake.</li>
+          <li><strong>Enforces order</strong> - the cleanup does not start until the pickup reports done. The counting waits for the cleanup. Nothing jumps the queue.</li>
+          <li><strong>Notices failure</strong> - when a step fails, the supervisor stops everything downstream, retries, and (if configured) wakes a human up.</li>
+        </ul>
+        <p>The scary acronym: engineers call the clipboard a <strong>DAG</strong>. In plain words, a DAG is <strong>an ordered checklist where each task waits for the ones it depends on</strong> - and the order can never loop back on itself (the cleanup cannot depend on the counting that depends on the cleanup). That is the entire idea. The three letters are just math vocabulary for "checklist with arrows".</p>
+        <p>And now the sentence "the dashboard refreshes at 6:05" changes meaning forever: 6:05 is not when something <em>starts</em> - it is the <strong>END of a dependency chain that began at 2:00</strong>. The refresh is the last checkbox on a four-hour clipboard.</p>
+        <div class="callout example"><span class="ex-pill">Real world</span>This is why late data cascades. When one step fails or stalls, everything after it waits - a 2am truck that arrives at 5am pushes cleaning, counting, and the refresh past 9am, and the Monday meeting opens on yesterday's numbers. Session 5 breaks this floor on purpose and teaches you to catch it.</div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>What the supervisor does not do<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Worth being precise, because Airflow gets blamed for everything: the supervisor <strong>runs the checklist; it does not do the work</strong>. It is not a database (the shelf is), not a cleaning tool (the transform step is), not a dashboard (the serve stage is). If the cleaning rules are wrong, Airflow will execute the wrong rules punctually, forever, with a green checkmark.</p>
+        <p>Building and debugging real DAGs is genuinely deep work - Astronomer's free Airflow 101 path exists for exactly that, and this course happily leaves the building to them. What you keep is the concept: somewhere in your company, a clipboard decides what runs when, and "when does my dashboard actually refresh?" is a question about the END of that clipboard.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ DEMO ============ -->
+  <section class="section" id="demo">
+    <div class="section-kicker">
+      <span class="klabel">Everyone reads</span>
+      <h2>Read a dashboard like a pro 🕵 <span class="tag demo">★ 18 min · everyone works</span></h2>
+    </div>
+    <p class="lede">Open the dashboard you use most - the real one, on your laptop or phone. You are going to read it the way a data professional does: not the numbers first, but the machinery and the definitions behind them. Blanks are findings, not failures.</p>
+    <div class="steps">
+      <div class="step"><p><strong>Open your most-used dashboard.</strong> The one you would actually miss. Write down its name and the one decision it feeds - if you cannot name a decision, that is finding number one.</p></div>
+      <div class="step"><p><strong>Find the freshness stamp.</strong> Hunt for "last updated", "data through", or a timestamp anywhere on the page. Found it? Note what it says. Absent? Write "no stamp" - you have discovered a blind spot one session before we weaponize it.</p></div>
+      <div class="step"><p><strong>Write the headline metric's definition sentence.</strong> "X = ___ minus ___, counted when ___". Fill what you know, circle every blank you cannot fill. Those circles are stage-five decisions someone made without telling you.</p></div>
+      <div class="step"><p><strong>Name your own consumer type.</strong> Of the five mouths - dashboard visitor, report reader, alert receiver, tool feeder, model feeder - which are YOU for this data? Then write the freshness you actually need. Be honest: is a day old genuinely a problem, or just less shiny?</p></div>
+      <div class="step"><p><strong>Find one number that should be an alert.</strong> Something you currently check by visiting, that should instead poke you when it crosses a line. Write the sentence: "alert me when ___ goes above/below ___". That sentence is a free, precise request for your data team.</p></div>
+    </div>
+    <div class="callout tip">
+      <strong>✦ If you finish early</strong>
+      Do step 3 on a second metric from the same dashboard. Different metric, same circles? You have found a dashboard with numbers but no dictionary - bring that observation to session 6.
+    </div>
+  </section>
+
+  <!-- ============ EXERCISE ============ -->
+  <section class="section" id="exercise">
+    <div class="section-kicker">
+      <span class="klabel">Before next session</span>
+      <h2>Homework 📝 <span class="tag exercise">◐ 20 minutes</span></h2>
+    </div>
+    <ul>
+      <li><strong>Test your definition sentence on a colleague.</strong> Show them the metric name only and ask them to write the sentence. Compare. If the sentences differ, you have reproduced session 1's two-numbers mystery inside one team - keep both versions.</li>
+      <li><strong>Ask one person who owns your headline metric.</strong> Not who built the dashboard - who owns the <em>definition</em>. "Nobody, really" is a common and useful answer.</li>
+      <li><strong>Note your dashboard's refresh time</strong> if it has one, and work backward: if the screen refreshes at 6:05, when do you suppose the truck leaves? You now think in chains - session 5 breaks one in front of you.</li>
+    </ul>
+  </section>
+
+  <!-- ============ QUIZ ============ -->
+  <section class="section" id="quiz">
+    <div class="section-kicker">
+      <span class="klabel">Check yourself</span>
+      <h2>Three questions before you go 🎯 <span class="tag exercise">◐ 90 seconds</span></h2>
+    </div>
+    <div class="quiz-q" data-answer="1">
+      <p class="qtext">1 · "How fresh does the data need to be?" The best answer is...</p>
+      <button class="qopt" type="button">A · as fresh as possible - real-time should be the default for everything</button>
+      <button class="qopt" type="button">B · it depends on the consumer - a fraud alert is useless a day old, while the Monday dashboard is fine a day old</button>
+      <button class="qopt" type="button">C · whatever the pipeline currently delivers - freshness cannot be chosen</button>
+      <p class="qwhy">Freshness is a per-consumer promise, not one number. The five mouths eat from the same shelf with wildly different appetites - and real-time everywhere is expensive furniture-by-courier. Matching appetite to delivery is what serving means.</p>
+    </div>
+    <div class="quiz-q" data-answer="2">
+      <p class="qtext">2 · Two teams report different revenue for the same day. Both pipelines pass every check. The most likely cause is...</p>
+      <button class="qopt" type="button">A · one team's warehouse lost rows during the overnight load</button>
+      <button class="qopt" type="button">B · the orchestrator ran the two pipelines in a different order</button>
+      <button class="qopt" type="button">C · the teams encoded different definitions at the metrics stage - different buckets, counting moments, or refund treatment</button>
+      <p class="qwhy">The machinery is identical and healthy; the judgment on top is not. Gift bundle in subscriptions or one-time? Counted at purchase or shipment? Refunds restated or not? Stage five is human decisions wearing numbers - and the fix is a written dictionary with owners, not a new tool.</p>
+    </div>
+    <div class="quiz-q" data-answer="0">
+      <p class="qtext">3 · Airflow is best described as...</p>
+      <button class="qopt" type="button">A · the shift supervisor - it runs an ordered checklist where each task waits for the ones it depends on</button>
+      <button class="qopt" type="button">B · a database where the cleaned tables are stored</button>
+      <button class="qopt" type="button">C · a dashboard tool that displays the finished metrics</button>
+      <p class="qwhy">Airflow (and Dagster) starts tasks on schedule, enforces order, and notices failure - it runs the clipboard, it does not do the work. Not a shelf, not a screen. And "refreshes at 6:05" means the chain that started at 2:00 reached its last checkbox.</p>
+    </div>
+    <p class="quiz-score"></p>
+  </section>
+
+  <!-- ============ SOURCES COVERED ============ -->
+  <section class="section" id="official">
+    <div class="section-kicker">
+      <span class="klabel">Coverage, honestly</span>
+      <h2>What this session covered from the official universe</h2>
+    </div>
+    <div class="covered">
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">DeepLearning.AI Data Engineering - the serving weeks</span><span class="note">serving for analytics AND machine learning, taught as the five consumers in plain English</span></div>
+      <div class="covered-row"><span class="status pill light">◐</span><span class="name">Astronomer Academy - Airflow 101</span><span class="note">orchestration and the DAG concept decoded; actually building DAGs stays with them</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">DataCamp Understanding Data Engineering - ch 3 scheduling</span><span class="note">scheduling in plain words - what "the dashboard refreshes at 6:05" really means</span></div>
+    </div>
+    <p>Certificates, videos, and graded assessments stay with the official providers - this course teaches the working core in plain English. Full source map in the repo's <em>materials/official-course-map.md</em>.</p>
+  </section>
+
+  <!-- ============ CHEAT SHEET ============ -->
+  <section class="cheat" id="cheatsheet">
+    <h3>Session 4 cheat sheet</h3>
+    <div class="grid-2">
+      <div class="cheat-item"><b>The five consumers</b><span>Dashboards, scheduled reports, alerts, other tools pulling data, AI/ML models - one shelf, five mouths.</span></div>
+      <div class="cheat-item"><b>Freshness appetite</b><span>Per consumer, not per company. Monday dashboard: a day old is fine. Fraud alert: useless a day old.</span></div>
+      <div class="cheat-item"><b>Metrics = decisions</b><span>"Revenue = gross minus refunds, counted at shipment" is a human DECISION, not a fact of nature.</span></div>
+      <div class="cheat-item"><b>The restatement question</b><span>Tuesday's refund of a Sunday order: shrink Sunday's number, or count it on Tuesday? Companies pick one.</span></div>
+      <div class="cheat-item"><b>The fix is social</b><span>A written metric dictionary everyone can read + one named owner per metric. Software stores it; humans write it.</span></div>
+      <div class="cheat-item"><b>Airflow / Dagster</b><span>The shift supervisor with a clipboard: starts tasks on schedule, enforces order, notices failure. Runs the work, does not do it.</span></div>
+      <div class="cheat-item"><b>DAG in plain words</b><span>An ordered checklist where each task waits for the ones it depends on, and the order never loops back.</span></div>
+      <div class="cheat-item"><b>6:05 decoded</b><span>Not a start time - the END of a dependency chain that began at 2:00. One late step, everything after waits.</span></div>
+    </div>
+  </section>
+
+  <footer class="pagefoot">
+    <span>Session 4 of 6 · learn-data-pipelines-with-phoebe · by Phoebe Fu &nbsp;·&nbsp; 📚 <a href="https://phoebefu6.github.io/learn-with-phoebe/">Learn with Phoebe ↗</a></span>
+    <span><a href="03-the-cleanup-room.html">← Prev: The cleanup room</a> &nbsp;·&nbsp; <a href="05-when-pipelines-break.html">Next: When pipelines break →</a></span>
+  </footer>
+
+</main>
+
+<script src="../assets/app.js?v=1"></script>
+</body>
+</html>

@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Session 5 · When pipelines break: stale, wrong, and how you find out - learn data pipelines with phoebe</title>
+<link rel="stylesheet" href="../assets/style.css?v=1">
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="wrap">
+    <span class="crumb"><a href="../index.html">learn-data-pipelines-with-phoebe</a> / Session 5 of 6</span>
+    <button class="btn" id="toggle-all" type="button">Expand all</button>
+    <button class="btn primary" id="zoom-toggle" type="button">Projector zoom: off</button>
+  </div>
+</div>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="eyebrow">Learn Data Pipelines with Phoebe · Session 5 of 6</div>
+    <h1>When pipelines break: <span class="accent">stale, wrong,</span> and how you find out</h1>
+    <p class="sub">Remember 6:05am - the moment Daybreak's dashboard refreshes? This session is about the mornings the truck never arrived. Pipelines break routinely, and the dashboard almost never admits it. Today you learn the two faces of a broken pipeline, the four failures behind most incidents, and the two safeguards that turn "the CFO found it on Thursday" into "we caught it before breakfast". Then you get to break Daybreak's pipeline yourself.</p>
+    <div class="chip-row">
+      <span class="chip level">🟢 Easiest</span>
+      <span class="chip audience">No code, no jargon</span>
+      <span class="chip audience">The session that saves careers</span>
+      <span class="chip time">45 min + self-study depth</span>
+    </div>
+    <div class="agenda">
+      <span class="a1" style="flex:1">0-3 · Welcome</span>
+      <span class="a2" style="flex:4">3-20 · Concepts</span>
+      <span class="a3" style="flex:4">20-40 · Break the floor</span>
+      <span class="a4" style="flex:1">40-45 · Q&amp;A</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ============ INTRO ============ -->
+  <section class="section" id="intro">
+    <div class="section-kicker">
+      <span class="klabel">Part 0</span>
+      <h2>Why this session exists</h2>
+    </div>
+    <p class="lede">Here is the uncomfortable truth the first four sessions saved for now: everything you built a mental model of - the pickup, the shelf, the cleanup, the counting - fails regularly, at every company, forever. A 2022 Monte Carlo/Wakefield survey of 300 data professionals found teams spend roughly 40% of their day on data quality issues and suffer about 61 incidents a month. The mark of a good data team is not zero failures. It is how fast a failure is <em>noticed</em>. This session makes you the person in the meeting who asks the noticing questions.</p>
+    <div class="legend">
+      <span class="pill solid">Live - covered in session</span>
+      <span class="pill light">Self-study - read after</span>
+      <span class="pill peach">✦ Try it on the floor</span>
+      <span class="pill inkpill">☕ The Daybreak case</span>
+    </div>
+    <div class="callout win">
+      <strong>★ What you walk out with today</strong>
+      The stale-versus-wrong distinction (the most useful two words in this course), the four failure causes behind most incidents, what freshness checks and data tests each catch - and each miss - and a week on Daybreak's pipeline floor where you break every stage yourself and watch what the dashboard admits.
+    </div>
+  </section>
+
+  <!-- ============ PART 1: STALE VS WRONG ============ -->
+  <section class="section" id="stale-wrong">
+    <div class="section-kicker">
+      <span class="klabel">Part 1 · covers the two failure faces</span>
+      <h2>The two ways a dashboard lies <span class="tag concept">7 min live</span></h2>
+    </div>
+    <p class="lede">Every pipeline failure, whatever caused it, reaches the dashboard wearing one of two faces. Learn to name them and you can triage any data incident in one sentence - which is genuinely more than many managers can do.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Stale versus wrong: the two faces of a broken pipeline">
+        <style>
+          .swH { font: 800 18px Inter, sans-serif; fill: #FFFFFF; }
+          .swT { font: 700 14px Inter, sans-serif; fill: #1C2B36; }
+          .swX { font: 400 12.5px Inter, sans-serif; fill: #64707A; }
+          .swR { font: 700 13px Inter, sans-serif; fill: #991B1B; }
+          .swN { font: 600 14px Inter, sans-serif; fill: #3A2A0E; }
+        </style>
+        <rect x="20" y="20" width="410" height="240" rx="14" fill="#E8F5FD"/>
+        <rect x="20" y="20" width="410" height="46" rx="14" fill="#0284C7"/>
+        <text class="swH" x="40" y="50">😴 STALE - the number is old</text>
+        <text class="swT" x="40" y="96">Today's data never arrived.</text>
+        <text class="swX" x="40" y="118">The screen still shows the last good day and</text>
+        <text class="swX" x="40" y="136">looks completely normal doing it.</text>
+        <text class="swT" x="40" y="168">The tell:</text>
+        <text class="swX" x="40" y="188">a "last updated" stamp that quietly stopped</text>
+        <text class="swX" x="40" y="206">moving. If nobody looks at it, nobody knows.</text>
+        <text class="swR" x="40" y="240">Visible - IF anyone checks the timestamp</text>
+        <rect x="450" y="20" width="410" height="240" rx="14" fill="#FEF2F2"/>
+        <rect x="450" y="20" width="410" height="46" rx="14" fill="#991B1B"/>
+        <text class="swH" x="470" y="50">🎭 WRONG - the number is fresh and false</text>
+        <text class="swT" x="470" y="96">Today's data arrived - damaged.</text>
+        <text class="swX" x="470" y="118">Half the orders dropped, or a bad calculation</text>
+        <text class="swX" x="470" y="136">ran. The timestamp says 6:05am. It is lying.</text>
+        <text class="swT" x="470" y="168">The tell:</text>
+        <text class="swX" x="470" y="188">there is none on the dashboard. Only a data</text>
+        <text class="swX" x="470" y="206">test upstream, or a human who smells the number.</text>
+        <text class="swR" x="470" y="240">Invisible - freshness checks cannot see it</text>
+        <rect x="20" y="284" width="14" height="14" rx="3" fill="#C08A3E"/>
+        <text class="swN" x="44" y="296">Stale is embarrassing. Wrong is dangerous - decisions get made on it. Different safeguards catch each.</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - stale versus wrong, the two faces every failure wears</figcaption>
+    </figure>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>Why "wrong" is the one that hurts<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>A stale dashboard eventually confesses - someone notices Tuesday's number never changed, and the damage is usually a day of mild confusion. A wrong dashboard <strong>testifies</strong>. It carries a fresh timestamp, it sits in the Monday deck, it gets quoted in the board meeting, and every downstream decision inherits the error.</p>
+        <ul>
+          <li><strong>Stale Daybreak:</strong> the 2am sync credential expired; the screen shows yesterday's $17,980 looking perfectly normal. Awkward, recoverable.</li>
+          <li><strong>Wrong Daybreak:</strong> a promo-code update starts writing prices as text; half the orders silently drop out of the total and the screen shows $9,120 - fresh stamp, wrong by half. Marketing kills the promo that was actually working.</li>
+        </ul>
+        <p>One sentence to keep: <strong>freshness tells you the data arrived; it says nothing about whether the data is right.</strong> Two different questions, two different safeguards - that is part 3.</p>
+        <div class="callout example"><span class="ex-pill">Real world</span>Industry post-mortems add a third, crueler variant: the pipeline that reports SUCCESS and delivers zero rows. Every stage ran green; there was simply nothing on the truck. It lands as "stale" on screen but as "all systems normal" in the engineering channel - which is why the timestamp, not the status light, is the check that matters.</div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Triage in one sentence<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>When a number looks off, ask in this order: <strong>"Is it stale or is it wrong?"</strong> - then: stale means look at the truck (ingestion, credentials, the source system's night); wrong means look at the cleanup room and the definitions (a change shipped recently, upstream or in the transform). You will be right about where the problem lives most of the time, and your data team will quietly upgrade their opinion of you.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 2: THE FOUR HORSEMEN ============ -->
+  <section class="section" id="four-causes">
+    <div class="section-kicker">
+      <span class="klabel">Part 2 · covers the failure taxonomy</span>
+      <h2>The four failures behind most incidents <span class="tag concept">6 min live</span></h2>
+    </div>
+    <p class="lede">Post-mortems across the industry keep converging on the same short list. None of them is exotic, none needs code to understand, and you have probably lived through at least two.</p>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>The taxonomy, with Daybreak's version of each<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <table class="clean">
+          <tr><th>Failure</th><th>What happens</th><th>Face on the dashboard</th></tr>
+          <tr><td><strong>Upstream schema change</strong> (the most common)</td><td>The source app changes shape without warning - a column renamed, a price field switched to text. The truck arrives; the cargo no longer fits the shelf.</td><td>Usually WRONG</td></tr>
+          <tr><td><strong>Late or missing data</strong></td><td>The source had a slow night; the 2am pickup ran on time and found nothing. Data arrives at 10am into a pipeline that stopped waiting at 2.</td><td>STALE (or partial)</td></tr>
+          <tr><td><strong>Expired credentials</strong></td><td>The password or key the pipeline uses to log into a source rotates or expires. The least glamorous failure in data, and a regular one.</td><td>STALE</td></tr>
+          <tr><td><strong>Bad deploy</strong></td><td>A human ships a change to the cleanup logic that runs green and computes nonsense - divides by the wrong column, drops a filter.</td><td>WRONG</td></tr>
+        </table>
+        <p>Notice the pattern: the STALE causes are mostly <em>operational</em> (credentials, timing) and the WRONG causes are mostly <em>change</em> - someone, somewhere, changed something. That is why data teams get nervous on release days and why "what changed yesterday?" is the first question in every incident.</p>
+        <div class="callout example"><span class="ex-pill">Real world</span>The same 2022 survey: the average incident took 4+ hours just to <em>detect</em> and about 9 more to resolve. Detection is the bottleneck - which tells you exactly where the smart money goes, and it is not "prevent all failures".</div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Why prevention alone cannot win<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Two of the four causes - schema changes and late data - originate in systems the data team does not control. The checkout app belongs to the product team; the ad data belongs to Google. You cannot code-review another company's release schedule. Since the causes cannot all be prevented, mature teams shift the goal: <strong>minimize time-to-notice, not incident count</strong>. That reframing is the entire logic of part 3, and it mirrors how site-reliability teams think about servers - uptime through fast detection and recovery, not through the fantasy of nothing ever breaking.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 3: THE SAFEGUARDS ============ -->
+  <section class="section" id="safeguards">
+    <div class="section-kicker">
+      <span class="klabel">Part 3 · covers the safeguards</span>
+      <h2>Two safeguards, and what each one misses <span class="tag concept">7 min live</span></h2>
+    </div>
+    <p class="lede">The industry's two standard safeguards map one-to-one onto the two faces. Neither replaces the other - and knowing which catches what is the most practical thing this course teaches.</p>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>Freshness checks - the timestamp with an alarm<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>A freshness check is a promise with a deadline: <em>"orders data should never be more than 12 hours old - warn at 12, alarm at 24."</em> The transform tool dbt ships this as a built-in feature (source freshness), and every monitoring product has an equivalent. It is cheap, it is one line of configuration, and it turns the silent STALE face into a loud one.</p>
+        <ul>
+          <li><strong>Catches:</strong> expired credentials, dead syncs, late data, the success-with-zero-rows trap - anything that stops new data arriving.</li>
+          <li><strong>Misses:</strong> everything that arrives on time and damaged. The $9,120 morning sails straight past a freshness check, timestamp gleaming.</li>
+        </ul>
+        <p>The dashboard-reader's version of this safeguard costs nothing: <strong>look at the "last updated" stamp before you trust a number</strong>. If your dashboard does not show one, that is a feature request worth making this week.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>Data tests - tasting the batch before it ships<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>A data test is an automatic check on the data's <em>content</em>, run inside the pipeline before results are published. The standard tool (dbt) ships exactly four built-in ones, and they are beautifully mundane:</p>
+        <table class="clean">
+          <tr><th>Test</th><th>Plain English</th><th>Daybreak example</th></tr>
+          <tr><td><strong>not_null</strong></td><td>this field must never be empty</td><td>every order has a price</td></tr>
+          <tr><td><strong>unique</strong></td><td>no duplicates allowed here</td><td>order #8412 appears exactly once</td></tr>
+          <tr><td><strong>accepted_values</strong></td><td>only these values are legal</td><td>order status is placed, shipped, or refunded - nothing else</td></tr>
+          <tr><td><strong>relationships</strong></td><td>this must point at something real</td><td>every order belongs to a customer that exists</td></tr>
+        </table>
+        <p>When a test fails, the pipeline can <strong>block publishing</strong> - the dashboard keeps yesterday's honest number instead of today's damaged one, and the on-call engineer gets paged. Trading "wrong" for "stale, loudly" is a wonderful trade.</p>
+        <ul>
+          <li><strong>Catches:</strong> the text-price schema change (price fails not_null when parsing dies), duplicate-counting bugs, refund statuses nobody expected.</li>
+          <li><strong>Misses:</strong> whatever nobody thought to test - and definition drift. If two teams count "revenue" differently, every test passes and the numbers still disagree. Tests check data against rules; they cannot invent the rules.</li>
+        </ul>
+        <div class="callout example"><span class="ex-pill">Real world</span>dbt's own documentation recommends a floor so standard it is almost ritual: every table's ID column gets unique + not_null. Two tests, one line each. Ask your data team "do our core tables have test coverage?" and watch the conversation get real.</div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>The third safeguard: someone actually on call<span class="mini">2 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Checks that fire alerts nobody owns are decoration. The unglamorous third safeguard is a routing rule: <em>a named person sees pipeline alerts the same morning</em>. On the floor below, the on-call lever changes nothing about detection - it changes recovery, roughly "fixed in 3 hours" versus "found by the CFO on Thursday". In the 2022 survey numbers, that is the difference between the 4-hour detection average and the multi-day tail. When you ask your data team about safeguards, the third question after freshness and tests is simply: <strong>"who gets woken up?"</strong></p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ DEMO: THE FLOOR ============ -->
+  <section class="section" id="demo">
+    <div class="section-kicker">
+      <span class="klabel">Everyone breaks things</span>
+      <h2>The pipeline floor 🔧 <span class="tag demo">★ 20 min · everyone breaks a pipeline</span></h2>
+    </div>
+    <p class="lede">This is Daybreak's pipeline, and you are allowed - encouraged - to break it. Every failure from part 2 is wired into a stage. Break one, run the day, and read the dashboard the way an executive would. Then score a full scripted week and watch what each safeguard is worth. The numbers are scripted from real incident patterns; the lesson is not.</p>
+
+    <div id="flow-live"></div>
+
+    <div class="steps">
+      <div class="step"><p><strong>Run a healthy day first.</strong> No breaks, no safeguards. The dashboard shows $18,240, fresh at 6:05am. This is what "normal" looks like - remember its face.</p></div>
+      <div class="step"><p><strong>Break Ingest (the expired credential), run the day.</strong> The dashboard shows $17,980 and looks utterly normal. That is the STALE face: yesterday's number wearing today's suit. Now switch the freshness badge ON and rerun - same number, but now it confesses.</p></div>
+      <div class="step"><p><strong>Repair Ingest, break Checkout (prices-as-text), run the day.</strong> $9,120 - about half of reality, timestamp fresh. Turn the freshness badge on. Rerun. It sails straight through: <em>freshness cannot see wrong</em>. Feel free to be slightly horrified.</p></div>
+      <div class="step"><p><strong>Turn data tests ON, rerun the same break.</strong> Publish blocked - the dashboard refuses to show the damaged number, and the story panel tells you what fired. Try the other WRONG breaks too (Transform's bad SQL: $3,648; Metrics' definition drift: $21,890 - note that one counts refunds as revenue, which no test catches).</p></div>
+      <div class="step"><p><strong>Switch to "Score a full week."</strong> Three scripted incidents. With no safeguards: 0 of 3 caught, 6 days trusting a bad number. Freshness on: 2 of 3, 2 blind days. Both on: 3 of 3 caught same-day, 0 blind days. That ladder - 0, 2, 3 - is the business case for data quality tooling in one widget.</p></div>
+      <div class="step"><p><strong>Last: toggle the on-call alert on any broken day.</strong> Watch the recovery line change from "the CFO, on Thursday" to "fixed before the 9am meeting". Detection plus ownership - that is the whole playbook.</p></div>
+    </div>
+    <div class="callout tip">
+      <strong>✦ The one to show a colleague</strong>
+      The Metrics break ($21,890 - refunds counted as revenue) passes the freshness check AND every data test, because the data is clean and the definition is the problem. Sessions 4 and 6 both told you definitions are human work; here is the proof, inflated by exactly the refunds.
+    </div>
+  </section>
+
+  <!-- ============ EXERCISE ============ -->
+  <section class="section" id="exercise">
+    <div class="section-kicker">
+      <span class="klabel">Before next session</span>
+      <h2>Homework 📝 <span class="tag exercise">◐ 20 minutes</span></h2>
+    </div>
+    <ul>
+      <li><strong>Find your blind spot:</strong> for the most important dashboard you use, answer the three safeguard questions - is there a freshness stamp? do the core tables have tests? who gets alerted? "I do not know" is a fine answer; it becomes a question for session 6.</li>
+      <li><strong>Recall one incident</strong> you have lived through (a number that was off, a report that stopped updating). Classify it: stale or wrong? Which of the four causes fits best? Which safeguard would have caught it?</li>
+      <li><strong>On the floor,</strong> find the one break that both safeguards miss (part 3 named it). Write one sentence on why no automatic check can catch it.</li>
+    </ul>
+  </section>
+
+  <!-- ============ QUIZ ============ -->
+  <section class="section" id="quiz">
+    <div class="section-kicker">
+      <span class="klabel">Check yourself</span>
+      <h2>Three questions before you go 🎯 <span class="tag exercise">◐ 90 seconds</span></h2>
+    </div>
+    <div class="quiz-q" data-answer="1">
+      <p class="qtext">1 · Daybreak's dashboard shows $9,120 with a fresh 6:05am timestamp on a day that really earned $18,240. Which safeguard can catch this?</p>
+      <button class="qopt" type="button">A · a freshness check - the number is clearly off</button>
+      <button class="qopt" type="button">B · a data test - the damaged prices fail a content check before publish</button>
+      <button class="qopt" type="button">C · neither - wrong numbers are undetectable</button>
+      <p class="qwhy">The data ARRIVED on time - freshness sees a gleaming timestamp and waves it through. Only a test on the content (not_null on price, a row-count check) sees the damage and blocks publish.</p>
+    </div>
+    <div class="quiz-q" data-answer="2">
+      <p class="qtext">2 · The most common cause of pipeline failures in industry post-mortems is...</p>
+      <button class="qopt" type="button">A · hackers attacking the data warehouse</button>
+      <button class="qopt" type="button">B · the warehouse running out of space</button>
+      <button class="qopt" type="button">C · an upstream system changing shape without warning</button>
+      <p class="qwhy">Schema changes top the lists - the source app renames a field or changes a type, no malice involved, and the cargo no longer fits the shelf. It is also the cause the data team can least prevent, since the source belongs to another team.</p>
+    </div>
+    <div class="quiz-q" data-answer="0">
+      <p class="qtext">3 · Mature data teams aim primarily to...</p>
+      <button class="qopt" type="button">A · minimize time-to-notice, because not all failures can be prevented</button>
+      <button class="qopt" type="button">B · reach zero pipeline failures through careful engineering</button>
+      <button class="qopt" type="button">C · check every number by hand before each meeting</button>
+      <p class="qwhy">Two of the four causes live in systems the data team does not control. Since prevention cannot be total, the winning metric is detection speed - the week-mode ladder (0 caught, then 2, then 3 of 3) is exactly this idea made visible.</p>
+    </div>
+    <p class="quiz-score"></p>
+  </section>
+
+  <!-- ============ SOURCES COVERED ============ -->
+  <section class="section" id="official">
+    <div class="section-kicker">
+      <span class="klabel">Coverage, honestly</span>
+      <h2>What this session covered from the official universe</h2>
+    </div>
+    <div class="covered">
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">dbt Fundamentals - Tests + source freshness</span><span class="note">the four built-in tests and freshness SLAs, taught in plain English; writing them stays with dbt's course</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Industry failure taxonomy (Hevo, Integrate.io post-mortem literature)</span><span class="note">schema change, late data, credentials, bad deploys - with the stale/wrong lens on top</span></div>
+      <div class="covered-row"><span class="status pill light">◐</span><span class="name">Monte Carlo data-observability materials</span><span class="note">the 2022 survey numbers quoted; the observability product category itself is named, not taught</span></div>
+    </div>
+    <p>Certificates, videos, and graded assessments stay with the official providers - this course teaches the working core in plain English. Full source map in the repo's <em>materials/official-course-map.md</em>.</p>
+  </section>
+
+  <!-- ============ CHEAT SHEET ============ -->
+  <section class="cheat" id="cheatsheet">
+    <h3>Session 5 cheat sheet</h3>
+    <div class="grid-2">
+      <div class="cheat-item"><b>The two faces</b><span>STALE = today never arrived, old number looks normal. WRONG = arrived damaged, fresh stamp, false number.</span></div>
+      <div class="cheat-item"><b>Which hurts more</b><span>Wrong. Stale confesses eventually; wrong gets quoted to the board with a gleaming timestamp.</span></div>
+      <div class="cheat-item"><b>The four causes</b><span>Upstream schema change (top of every list), late data, expired credentials, bad deploy.</span></div>
+      <div class="cheat-item"><b>Freshness checks</b><span>Catch everything that stops data arriving. See nothing that arrives damaged. Cheap - demand the stamp.</span></div>
+      <div class="cheat-item"><b>Data tests</b><span>dbt's four: not_null, unique, accepted_values, relationships. Can block publish - wrong becomes stale-loudly.</span></div>
+      <div class="cheat-item"><b>What both miss</b><span>Definition drift ($21,890 counting refunds). Clean data, passing tests, wrong meaning - human work.</span></div>
+      <div class="cheat-item"><b>The ladder</b><span>Week of 3 incidents: no safeguards 0 caught / 6 blind days → freshness 2 / 2 → both 3 of 3 / 0.</span></div>
+      <div class="cheat-item"><b>Three questions to ask</b><span>Is there a freshness stamp? Do core tables have tests? Who gets woken up?</span></div>
+    </div>
+  </section>
+
+  <footer class="pagefoot">
+    <span>Session 5 of 6 · learn-data-pipelines-with-phoebe · by Phoebe Fu &nbsp;·&nbsp; 📚 <a href="https://phoebefu6.github.io/learn-with-phoebe/">Learn with Phoebe ↗</a></span>
+    <span><a href="04-the-last-mile.html">← Prev: The last mile</a> &nbsp;·&nbsp; <a href="06-people-tools-next-steps.html">Next: People, tools, next steps →</a></span>
+  </footer>
+
+</main>
+
+<script src="../assets/app.js?v=1"></script>
+<script src="../assets/flow-live.js?v=1"></script>
+</body>
+</html>

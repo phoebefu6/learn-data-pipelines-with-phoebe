@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Session 6 · People, tools, and next steps: talking to your data team - learn data pipelines with phoebe</title>
+<link rel="stylesheet" href="../assets/style.css?v=1">
+</head>
+<body>
+
+<div class="toolbar">
+  <div class="wrap">
+    <span class="crumb"><a href="../index.html">learn-data-pipelines-with-phoebe</a> / Session 6 of 6</span>
+    <button class="btn" id="toggle-all" type="button">Expand all</button>
+    <button class="btn primary" id="zoom-toggle" type="button">Projector zoom: off</button>
+  </div>
+</div>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="eyebrow">Learn Data Pipelines with Phoebe · Session 6 of 6</div>
+    <h1>People, tools, and next steps: <span class="accent">talking to your data team</span></h1>
+    <p class="sub">You can now sketch the floor: six boxes, order #8412 riding through them overnight, the ways it goes stale or wrong. This final session staffs the floor, names the machines, and turns your session-1 napkin into questions a data team will actually respect. You arrived reading dashboards; you leave able to interview one.</p>
+    <div class="chip-row">
+      <span class="chip level">🟠 Deepening</span>
+      <span class="chip audience">No code, no jargon</span>
+      <span class="chip audience">Your working toolkit</span>
+      <span class="chip time">45 min + self-study depth</span>
+    </div>
+    <div class="agenda">
+      <span class="a1" style="flex:1">0-3 · Welcome</span>
+      <span class="a2" style="flex:4">3-20 · Concepts</span>
+      <span class="a3" style="flex:4">20-40 · Write the ask</span>
+      <span class="a4" style="flex:1">40-45 · Wrap</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ============ INTRO ============ -->
+  <section class="section" id="intro">
+    <div class="section-kicker">
+      <span class="klabel">Part 0</span>
+      <h2>Why this session exists</h2>
+    </div>
+    <p class="lede">Five sessions of machinery, one session of people - because in the end the pipeline is operated by humans with job titles, the boxes have brand names you will hear in meetings, and the whole point of understanding the floor is to ask for things well. Today closes the loop: who does what, what every tool name actually means, and the four-sentence ask that gets you data without three rounds of clarifying meetings.</p>
+    <div class="legend">
+      <span class="pill solid">Live - covered in session</span>
+      <span class="pill light">Self-study - read after</span>
+      <span class="pill peach">✦ Try it on your own dashboard</span>
+      <span class="pill inkpill">☕ The Daybreak case</span>
+    </div>
+    <div class="callout win">
+      <strong>★ What you walk out with today</strong>
+      The three roles that run the floor and which boxes each one owns, the full plain-English decoder table for every tool name this course has mentioned, and one real, sendable data request written to a standard a stranger could fulfill.
+    </div>
+    <div class="callout tip">
+      <strong>Bring your napkin</strong>
+      The six-box sketch from session 1, blanks and all. Today every blank becomes a question, and every question has a named person to receive it. That napkin was always the syllabus.
+    </div>
+  </section>
+
+  <!-- ============ PART 1: WHO DOES WHAT ============ -->
+  <section class="section" id="roles">
+    <div class="section-kicker">
+      <span class="klabel">Part 1 · covers the roles</span>
+      <h2>Who does what on the floor <span class="tag concept">7 min live</span></h2>
+    </div>
+    <p class="lede">Three job titles cover the whole conveyor belt, and once you see which boxes each one owns, "who should I ask?" stops being a mystery. The borders below are the big-company version - we will be honest about small companies in a moment.</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 290" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="The six pipeline stages with three role brackets showing who owns which stages">
+        <style>
+          .rlT { font: 700 15px Inter, sans-serif; fill: #FFFFFF; }
+          .rlR { font: 700 13px Inter, sans-serif; }
+          .rlS { font: 400 12px Inter, sans-serif; fill: #64707A; }
+          .rlN { font: 600 14px Inter, sans-serif; fill: #3A2A0E; }
+          .rlA { stroke: #C3CDD6; stroke-width: 2.5; fill: none; marker-end: url(#rlAh); }
+          .rlE { font: 400 20px Inter, sans-serif; }
+        </style>
+        <defs>
+          <marker id="rlAh" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6" fill="none" stroke="#C3CDD6" stroke-width="1.5"/>
+          </marker>
+        </defs>
+        <text class="rlR" x="20" y="48" fill="#075985">Data engineer</text>
+        <text class="rlS" x="20" y="66">builds + runs the roads, trucks, shelf - and the 2am schedule</text>
+        <path d="M20,106 v-10 h413 v10" stroke="#075985" stroke-width="2.5" fill="none"/>
+        <text class="rlR" x="452" y="48" fill="#0284C7">Analytics engineer</text>
+        <text class="rlS" x="452" y="66">owns the cleanup room + definitions</text>
+        <path d="M452,106 v-10 h269 v10" stroke="#0284C7" stroke-width="2.5" fill="none"/>
+        <text class="rlR" x="740" y="48" fill="#C08A3E">Data analyst</text>
+        <text class="rlS" x="740" y="66">the last mile</text>
+        <path d="M740,106 v-10 h125 v10" stroke="#C08A3E" stroke-width="2.5" fill="none"/>
+        <rect x="20" y="118" width="125" height="56" rx="12" fill="#075985"/>
+        <text class="rlE" x="34" y="152">🛒</text><text class="rlT" x="60" y="153">Source</text>
+        <line class="rlA" x1="150" y1="146" x2="160" y2="146"/>
+        <rect x="164" y="118" width="125" height="56" rx="12" fill="#0284C7"/>
+        <text class="rlE" x="178" y="152">🚚</text><text class="rlT" x="204" y="153">Ingest</text>
+        <line class="rlA" x1="294" y1="146" x2="304" y2="146"/>
+        <rect x="308" y="118" width="125" height="56" rx="12" fill="#0284C7"/>
+        <text class="rlE" x="322" y="152">🏬</text><text class="rlT" x="348" y="153">Store</text>
+        <line class="rlA" x1="438" y1="146" x2="448" y2="146"/>
+        <rect x="452" y="118" width="125" height="56" rx="12" fill="#0EA5E9"/>
+        <text class="rlE" x="466" y="152">🧼</text><text class="rlT" x="492" y="153">Transform</text>
+        <line class="rlA" x1="582" y1="146" x2="592" y2="146"/>
+        <rect x="596" y="118" width="125" height="56" rx="12" fill="#0EA5E9"/>
+        <text class="rlE" x="610" y="152">📐</text><text class="rlT" x="636" y="153">Metrics</text>
+        <line class="rlA" x1="726" y1="146" x2="736" y2="146"/>
+        <rect x="740" y="118" width="125" height="56" rx="12" fill="#C08A3E"/>
+        <text class="rlE" x="754" y="152">📊</text><text class="rlT" x="780" y="153">Serve</text>
+        <text class="rlS" x="20" y="200">where data is born</text>
+        <text class="rlS" x="308" y="200">the shelf</text>
+        <text class="rlS" x="452" y="200">raw to ready</text>
+        <text class="rlS" x="740" y="200">the screens</text>
+        <rect x="20" y="240" width="14" height="14" rx="3" fill="#C08A3E"/>
+        <text class="rlN" x="44" y="252">Small companies: one person wears all three hats - usually just called "the data person".</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - the six stages from session 1, now with the three roles that own them</figcaption>
+    </figure>
+
+    <details class="card" open>
+      <summary><span class="mode live">Live</span>Three jobs, one conveyor belt<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Left to right across your napkin:</p>
+        <ul>
+          <li><strong>Data engineer</strong> - builds and runs the roads and trucks: the source connections, the ingestion, the warehouse, and the overnight schedule from session 4. When the 2am truck fails, this is who gets woken up. Their pride: nobody notices their work, because it just runs.</li>
+          <li><strong>Analytics engineer</strong> - owns the cleanup room and the definitions: transform and metrics. This is the dbt person - the one who writes the cleaning rulebook down and turns "revenue = gross minus refunds, counted at shipment" from a meeting argument into a rule that runs every night. The newest of the three titles, and the bridge between the other two.</li>
+          <li><strong>Data analyst</strong> - the last mile: dashboards, deep-dives, and the "why did it drop?" question at 9:15am on Monday. Analysts face the business; they translate your question into the shelf's language and back.</li>
+        </ul>
+        <p>At small companies the lines blur completely - one person wears all three hats and is usually just called "the data person". That is fine; the boxes still exist even when one human walks between them. Knowing the boxes tells you what that person is silently juggling.</p>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Job-title decoder, three sentences each<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p><strong>Data engineer</strong> vs <strong>data analyst</strong> vs <strong>data scientist</strong>, since job posts blur them daily: an engineer builds the road the data travels (you met their floor all course). An analyst uses the finished data to answer business questions - dashboards, deep-dives, the last mile. A <strong>data scientist</strong> builds models that predict or classify - Daybreak's churn predictor is data-science work, and it eats from the same cleaned shelf as everything else.</p>
+        <p>Quick tell when reading a job post: "builds pipelines" = engineer, "answers why" = analyst, "predicts what's next" = scientist. Titles drift; the three verbs do not.</p>
+      </div>
+    </details>
+
+    <div class="callout tip">
+      <strong>The honest paragraph on data governance</strong>
+      One job we name but do not teach: <strong>data governance</strong> - deciding who is allowed to see what, and proving it. Customer addresses on the Daybreak shelf are visible to the shipping team, not to everyone with a login; someone has to draw and enforce those lines. It matters enormously and it is its own discipline - this shelf has whole courses on it (learn-data-governance, learn-pdpa-dnc, learn-gdpr) when you need that door.
+    </div>
+  </section>
+
+  <!-- ============ PART 2: THE DECODER TABLE ============ -->
+  <section class="section" id="decoder">
+    <div class="section-kicker">
+      <span class="klabel">Part 2 · covers the tool names</span>
+      <h2>The decoder table <span class="tag concept">7 min live</span></h2>
+    </div>
+    <p class="lede">Every tool name this course has mentioned, decoded in one place - the table session 1 promised you. Read the middle column first: the plain-English job is the lesson, the brand names are trivia that happens to be useful in meetings.</p>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>The full map, one row per box<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <table class="clean">
+          <tr><th>Stage</th><th>Job in plain English</th><th>Names you will hear</th></tr>
+          <tr><td>Ingestion</td><td>Pre-built trucks - scheduled pickups from hundreds of common sources, no custom building</td><td>Fivetran, Airbyte</td></tr>
+          <tr><td>Warehouse / lakehouse</td><td>The shelf - one big queryable store, rented by the query instead of bought by the box</td><td>Snowflake, BigQuery, Redshift, Databricks</td></tr>
+          <tr><td>Transform</td><td>The written-down cleaning rulebook - raw to ready, reviewable, versioned</td><td>dbt</td></tr>
+          <tr><td>Orchestration</td><td>The shift supervisor - runs the ordered checklist, enforces who waits for whom</td><td>Airflow, Dagster</td></tr>
+          <tr><td>BI / serving</td><td>The screens - dashboards, explorations, the last mile</td><td>Looker, Tableau, Power BI</td></tr>
+        </table>
+        <p>The big honest point: <strong>the names on the boxes change every few years; the six stages have not.</strong> Learn the stages deliberately, collect the names casually - a name you meet in a meeting next year will still snap onto one of these five rows.</p>
+        <div class="callout example"><span class="ex-pill">Real world</span>Industry maps of the "modern data stack" draw exactly this table: Fivetran/Airbyte into Snowflake/BigQuery/Redshift/Databricks, dbt on top, Airflow/Dagster running the schedule, Looker/Tableau/Power BI on the screens. When Atlan publishes that layer map, it is your session-1 napkin with logos on it. You did not learn a simplified version - you learned the map.</div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>"We're migrating to X" - what that sentence means now<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>When someone announces "we're migrating to Snowflake" or "we're moving to Databricks", you can now hear which box they mean: the <strong>shelf</strong>. And you can now guess why it takes a year: the shelf is the box everything else plugs into. Every truck route in, every cleaning rule, every dashboard connection out - all of them point at the old shelf and every one must be re-pointed, re-tested, and proven to produce the same numbers.</p>
+        <p>Same decode for other announcements: "adopting dbt" = writing the cleaning rulebook down (transform box), "rolling out Looker" = new screens (serving box), "moving to Airflow" = new shift supervisor (orchestration). The scary sentence is never about the whole floor - it is one box, plus every arrow touching it. The arrows are the year.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ PART 3: THE FOUR-PART ASK ============ -->
+  <section class="section" id="the-ask">
+    <div class="section-kicker">
+      <span class="klabel">Part 3 · covers asking well</span>
+      <h2>How to ask for data so you actually get it <span class="tag concept">6 min live</span></h2>
+    </div>
+    <p class="lede">The most practical skill in this course fits in four sentences. Vague asks bounce - not because data teams are difficult, but because a vague ask forces the analyst to interview you before they can start. Do the interview yourself, in writing, and your request jumps the queue.</p>
+
+    <details class="card">
+      <summary><span class="mode live">Live</span>The four-part ask<span class="mini">4 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Every strong data request answers four things, one sentence each:</p>
+        <ul>
+          <li><strong>1 · Business question</strong> - what decision does this feed? Not "I need the sales data" but "we're deciding whether to extend the gift-bundle promo." The decision tells the analyst what actually matters and lets them push back usefully.</li>
+          <li><strong>2 · Definition</strong> - your best definition sentence, blanks circled: "gift-bundle revenue = gross minus refunds, counted at ___". A circled blank is a gift: it says "you decide this bit, but tell me what you decided."</li>
+          <li><strong>3 · Freshness need</strong> - honest, per session 4. "Weekly is fine" is a beautiful sentence that saves real money. "Real-time" by reflex is how requests get quietly deprioritized.</li>
+          <li><strong>4 · Deadline + format</strong> - when you need it and what shape: a chart, a table, a number in Slack, an alert. "By Friday, as a chart plus the underlying table" ends the guessing.</li>
+        </ul>
+        <p>Compare the bounce: <strong>"can I get the sales data?"</strong> Which sales? Defined how? Fresh as of when? By when, in what? Four clarifying questions, at least one meeting, and you have taught the team that your requests cost extra. The four-part ask is the same request with the meeting pre-run on paper.</p>
+        <div class="callout example"><span class="ex-pill">Real world</span>Daybreak's analyst kept a private tally for a month: requests arriving as one vague sentence averaged three back-and-forth rounds before work could start; requests arriving with a definition sentence and a deadline started same-day. Nothing about the pipeline changed - only the asks did.</div>
+      </div>
+    </details>
+
+    <details class="card">
+      <summary><span class="mode self">Self-study</span>Cash in the napkin + the three safeguard questions<span class="mini">3 min</span><span class="caret">▶</span></summary>
+      <div class="body">
+        <p>Your session-1 napkin earns its keep today: <strong>every blank on it becomes one question</strong>, and now you know who receives it. Blank at the source or truck? Data engineer. Blank in a cleaning rule or a definition? Analytics engineer. Blank about what the dashboard is really showing? Analyst. Six boxes, three names, no more "who do I even ask?"</p>
+        <p>And from session 5, you hold three safeguard questions you are now licensed to ask in any meeting where a number matters:</p>
+        <ul>
+          <li><strong>"Does this dashboard have a freshness stamp?"</strong> - the stale-vs-wrong lesson, one sentence.</li>
+          <li><strong>"Are there tests on the core tables?"</strong> - the difference between hoping and checking.</li>
+          <li><strong>"Who gets woken up when the overnight run fails?"</strong> - the question that reveals whether the floor is actually staffed.</li>
+        </ul>
+        <p>Asked politely, these three mark you as someone who understands the floor - which is exactly what you now are.</p>
+      </div>
+    </details>
+  </section>
+
+  <!-- ============ DEMO ============ -->
+  <section class="section" id="demo">
+    <div class="section-kicker">
+      <span class="klabel">Everyone writes</span>
+      <h2>Write one real ask ✍ <span class="tag demo">★ 20 min · everyone works</span></h2>
+    </div>
+    <p class="lede">Not a drill - a real request you have been meaning to make. By the end of this block you have a sendable message. Here is what a finished one looks like, anatomy labeled:</p>
+
+    <figure class="zoomable">
+      <svg viewBox="0 0 880 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A finished four-part data request with each of the four parts labeled">
+        <style>
+          .akT { font: 700 13px Inter, sans-serif; fill: #1C2B36; }
+          .akX { font: 400 12px Inter, sans-serif; fill: #1C2B36; }
+          .akL { font: 700 12px Inter, sans-serif; fill: #FFFFFF; }
+          .akN { font: 600 14px Inter, sans-serif; fill: #3A2A0E; }
+          .akA { stroke: #C3CDD6; stroke-width: 2; fill: none; marker-end: url(#akAh); }
+        </style>
+        <defs>
+          <marker id="akAh" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L6,3 L0,6" fill="none" stroke="#C3CDD6" stroke-width="1.5"/>
+          </marker>
+        </defs>
+        <rect x="30" y="40" width="550" height="250" rx="14" fill="#E8F5FD"/>
+        <text class="akT" x="54" y="74">To: the data team · Re: gift-bundle promo numbers</text>
+        <line x1="54" y1="90" x2="556" y2="90" stroke="#C3CDD6" stroke-width="1.5"/>
+        <text class="akX" x="54" y="122">We're deciding whether to extend the gift-bundle promo.</text>
+        <text class="akX" x="54" y="162">Gift-bundle revenue = gross minus refunds, counted at (?).</text>
+        <text class="akX" x="54" y="202">Weekly numbers are honestly fine - no need for real-time.</text>
+        <text class="akX" x="54" y="242">By Friday please, as a chart plus the underlying table.</text>
+        <rect x="640" y="100" width="215" height="36" rx="8" fill="#075985"/>
+        <text class="akL" x="654" y="123">1 · Business question</text>
+        <line class="akA" x1="638" y1="118" x2="592" y2="118"/>
+        <rect x="640" y="140" width="215" height="36" rx="8" fill="#0284C7"/>
+        <text class="akL" x="654" y="163">2 · Definition (blank circled)</text>
+        <line class="akA" x1="638" y1="158" x2="592" y2="158"/>
+        <rect x="640" y="180" width="215" height="36" rx="8" fill="#0EA5E9"/>
+        <text class="akL" x="654" y="203">3 · Freshness need</text>
+        <line class="akA" x1="638" y1="198" x2="592" y2="198"/>
+        <rect x="640" y="220" width="215" height="36" rx="8" fill="#C08A3E"/>
+        <text class="akL" x="654" y="243">4 · Deadline + format</text>
+        <line class="akA" x1="638" y1="238" x2="592" y2="238"/>
+        <rect x="30" y="322" width="14" height="14" rx="3" fill="#C08A3E"/>
+        <text class="akN" x="54" y="334">The pressure test: could a stranger fulfill this without booking a meeting with you?</text>
+      </svg>
+      <figcaption>🔍 Click to zoom - a finished four-part ask, each sentence doing one job</figcaption>
+    </figure>
+
+    <div class="steps">
+      <div class="step"><p><strong>Pick a real question you have.</strong> Something you have wanted from data for weeks. If nothing is burning, take the alert sentence you wrote in session 4's demo - it was always destined to become this.</p></div>
+      <div class="step"><p><strong>Draft the four-part ask in four sentences.</strong> Business question, definition sentence with blanks circled, honest freshness need, deadline + format. Four sentences, no more - length is not rigor.</p></div>
+      <div class="step"><p><strong>Attach your napkin photo.</strong> The session-1 sketch, re-drawn or original. It tells the data team exactly where your understanding is solid and where the blanks are - and it says "I speak floor" better than any preamble.</p></div>
+      <div class="step"><p><strong>Pressure-test it.</strong> Read your four sentences as a stranger: could someone who has never met you fulfill this without a meeting? If any sentence needs your presence to explain, rewrite it until it does not.</p></div>
+      <div class="step"><p><strong>Send it - or shelve it loaded.</strong> If the need is real, send it today. If not, save it as your template for the next real need; the format is the deliverable.</p></div>
+      <div class="step"><p><strong>Bonus: ask one safeguard question.</strong> Pick one of the three from session 5 - freshness stamp? tests on core tables? who gets woken up? - ask your data team this week, and write down the answer. The answer tells you more about your data's trustworthiness than any dashboard can.</p></div>
+    </div>
+    <div class="callout tip">
+      <strong>✦ If you finish early</strong>
+      Write a second ask for a different team's data. Notice how the four-part shape holds even when the subject changes completely - the format is the skill, and it now travels with you to every job you will ever have.
+    </div>
+  </section>
+
+  <!-- ============ NEXT COURSE ============ -->
+  <section class="section" id="next-course">
+    <div class="section-kicker">
+      <span class="klabel">The ladder up</span>
+      <h2>Your next course</h2>
+    </div>
+    <p class="lede">This course made you conversational; the doors below make you dangerous. Honest pointers, pick by appetite:</p>
+    <div class="covered">
+      <div class="covered-row"><span class="status pill light">→</span><span class="name">learn-data-literacy-with-phoebe</span><span class="note">the sibling door - reading the dashboard side: charts, averages, and the traps in interpreting the numbers this floor delivers</span></div>
+      <div class="covered-row"><span class="status pill light">→</span><span class="name">learn-data-warehouse-with-phoebe</span><span class="note">same Daybreak, real SQL - the Store box in depth: how the shelf is actually organized and queried</span></div>
+      <div class="covered-row"><span class="status pill light">→</span><span class="name">learn-sql-with-phoebe</span><span class="note">the language of the cleanup room - write the questions yourself instead of asking for them</span></div>
+      <div class="covered-row"><span class="status pill light">→</span><span class="name">learn-data-engineering-with-phoebe</span><span class="note">the builder capstone - stop touring the floor and start building it</span></div>
+    </div>
+    <div class="callout tip">
+      <strong>How to choose</strong>
+      Want to read numbers better? Data literacy. Curious what the shelf really looks like inside? Data warehouse. Itching to write your own questions? SQL. Ready to build the floor itself? Data engineering. Any door works - they all open onto the same six-stage spine you can now draw from memory.
+    </div>
+  </section>
+
+  <!-- ============ EXERCISE ============ -->
+  <section class="section" id="exercise">
+    <div class="section-kicker">
+      <span class="klabel">Before you go</span>
+      <h2>Homework 📝 <span class="tag exercise">◐ 20 minutes</span></h2>
+    </div>
+    <ul>
+      <li><strong>Send the ask.</strong> The four sentences plus the napkin photo, to your actual data team (or the person wearing all three hats). Note how the response differs from your last vague request.</li>
+      <li><strong>Re-draw the session-1 napkin from memory</strong> and put it next to the photo of the original. Count the blanks that became labels: trucks, shelves, rulebooks, supervisors, definitions, owners. That delta is the course.</li>
+      <li><strong>Pick your next course</strong> from the ladder above and open its session 1 this week - momentum is a freshness problem too.</li>
+    </ul>
+  </section>
+
+  <!-- ============ QUIZ ============ -->
+  <section class="section" id="quiz">
+    <div class="section-kicker">
+      <span class="klabel">Check yourself</span>
+      <h2>Three questions before you go 🎯 <span class="tag exercise">◐ 90 seconds</span></h2>
+    </div>
+    <div class="quiz-q" data-answer="1">
+      <p class="qtext">1 · The cleanup room and the metric definitions - transform and metrics - are owned by...</p>
+      <button class="qopt" type="button">A · the data engineer, who owns everything before the dashboard</button>
+      <button class="qopt" type="button">B · the analytics engineer - the dbt person who writes the cleaning rulebook and the definitions down</button>
+      <button class="qopt" type="button">C · the data analyst, since definitions belong to the business side</button>
+      <p class="qwhy">The analytics engineer is the bridge role: the engineer runs the roads and trucks up to the shelf, the analyst works the last mile, and the analytics engineer owns raw-to-ready plus "what does revenue mean" in between. At small companies one person wears all three hats - but the boxes still exist.</p>
+    </div>
+    <div class="quiz-q" data-answer="2">
+      <p class="qtext">2 · The four parts of a data ask that actually gets fulfilled are...</p>
+      <button class="qopt" type="button">A · urgency, seniority of the requester, the tool to use, and a meeting invite</button>
+      <button class="qopt" type="button">B · the dashboard name, the export format, the file size, and a thank-you</button>
+      <button class="qopt" type="button">C · business question, definition sentence, honest freshness need, and deadline + format</button>
+      <p class="qwhy">What decision this feeds, your best definition with blanks circled, how fresh you honestly need it, and when + in what shape. Four sentences that pre-run the clarifying meeting - the pressure test is whether a stranger could fulfill it without ever talking to you.</p>
+    </div>
+    <div class="quiz-q" data-answer="0">
+      <p class="qtext">3 · Five years from now the tool names in today's decoder table look dated. The right response is...</p>
+      <button class="qopt" type="button">A · nothing breaks - names change every few years, the six stages persist, so learn stages and collect names casually</button>
+      <button class="qopt" type="button">B · re-take a pipelines course from scratch, since the field will have restarted</button>
+      <button class="qopt" type="button">C · memorize the new names fast - the brand names are the real knowledge</button>
+      <p class="qwhy">The whole course bet: source, ingest, store, transform, metrics, serve is the stable spine, and every new brand name snaps onto one of those boxes. Your napkin outlives the logos - that is why it, and not the decoder table, was the syllabus.</p>
+    </div>
+    <p class="quiz-score"></p>
+  </section>
+
+  <!-- ============ SOURCES COVERED ============ -->
+  <section class="section" id="official">
+    <div class="section-kicker">
+      <span class="klabel">Coverage, honestly</span>
+      <h2>What this session covered from the official universe</h2>
+    </div>
+    <div class="covered">
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">IBM Introduction to Data Engineering - modules 1 + 4</span><span class="note">roles, the data ecosystem, and career paths - taught as the three hats on the floor</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">Atlan modern data stack - the layer map</span><span class="note">ingestion → warehouse → transform → orchestration → BI, decoded as the table with plain-English jobs</span></div>
+      <div class="covered-row"><span class="status pill solid">✓</span><span class="name">The six-stage spine, all sessions</span><span class="note">you can now draw it, staff it, break it, and question it</span></div>
+    </div>
+    <p>Certificates, videos, and graded assessments stay with the official providers - this course teaches the working core in plain English. Full source map in the repo's <em>materials/official-course-map.md</em>.</p>
+  </section>
+
+  <!-- ============ CHEAT SHEET ============ -->
+  <section class="cheat" id="cheatsheet">
+    <h3>Session 6 cheat sheet</h3>
+    <div class="grid-2">
+      <div class="cheat-item"><b>The three roles</b><span>Data engineer: roads, trucks, shelf, schedule. Analytics engineer: cleanup + definitions (the dbt person). Analyst: the last mile.</span></div>
+      <div class="cheat-item"><b>Small-company truth</b><span>One person wears all three hats - "the data person". The boxes still exist; know what they are juggling.</span></div>
+      <div class="cheat-item"><b>Data governance</b><span>Who is allowed to see what, and proving it. Named here, taught in its own courses - it is a whole discipline.</span></div>
+      <div class="cheat-item"><b>The decoder</b><span>Fivetran/Airbyte = trucks · Snowflake/BigQuery/Redshift/Databricks = shelf · dbt = rulebook · Airflow/Dagster = supervisor · Looker/Tableau/Power BI = screens.</span></div>
+      <div class="cheat-item"><b>Names vs stages</b><span>Tool names change every few years; the six stages have not. Learn stages deliberately, collect names casually.</span></div>
+      <div class="cheat-item"><b>The four-part ask</b><span>Business question → definition sentence (blanks circled) → honest freshness need → deadline + format. Four sentences.</span></div>
+      <div class="cheat-item"><b>The pressure test</b><span>Could a stranger fulfill your request without a meeting? If not, rewrite until they could.</span></div>
+      <div class="cheat-item"><b>Three safeguard questions</b><span>Freshness stamp? Tests on core tables? Who gets woken up? You are now licensed to ask all three in any meeting.</span></div>
+    </div>
+  </section>
+
+  <footer class="pagefoot">
+    <span>Session 6 of 6 · learn-data-pipelines-with-phoebe · by Phoebe Fu &nbsp;·&nbsp; 📚 <a href="https://phoebefu6.github.io/learn-with-phoebe/">Learn with Phoebe ↗</a></span>
+    <span><a href="05-when-pipelines-break.html">← Prev: When pipelines break</a> &nbsp;·&nbsp; <a href="../index.html">Back to all sessions →</a></span>
+  </footer>
+
+</main>
+
+<script src="../assets/app.js?v=1"></script>
+</body>
+</html>

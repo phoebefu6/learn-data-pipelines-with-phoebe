@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>learn data pipelines with phoebe - how one order becomes a dashboard, in plain English</title>
+<link rel="stylesheet" href="assets/style.css?v=1">
+<style>
+  .stats-row { display: flex; gap: 2.4rem; margin-top: 1.5rem; flex-wrap: wrap; }
+  .stat b { display: block; font-size: 2.1rem; font-weight: 800; line-height: 1.05; font-variant-numeric: tabular-nums; }
+  .stat span { font-size: .72rem; opacity: .85; text-transform: uppercase; letter-spacing: .09em; font-weight: 600; }
+
+  .course-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+  .course-card {
+    border: 1px solid var(--hairline);
+    border-top: 4px solid var(--diff, var(--indigo));
+    border-radius: var(--radius);
+    padding: 1.2rem 1.3rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    text-decoration: none;
+    color: var(--ink);
+    background: #fff;
+    transition: box-shadow .15s ease, border-color .15s ease, transform .15s ease;
+    position: relative;
+  }
+  .course-card:hover { border-color: var(--indigo-soft); border-top-color: var(--diff, var(--indigo)); box-shadow: 0 8px 28px rgba(2,132,199,.16); transform: translateY(-3px); }
+  .course-card .cicon { font-size: 1.7rem; line-height: 1; }
+  .course-card .cnum { font-size: .72rem; font-weight: 700; color: var(--indigo); text-transform: uppercase; letter-spacing: .1em; }
+  .course-card h3 { font-size: 1.05rem; font-weight: 800; line-height: 1.3; }
+  .course-card p { font-size: .85rem; color: var(--muted); flex: 1; }
+  .course-card .meta { display: flex; gap: .4rem; flex-wrap: wrap; }
+
+  .diff-legend { display: flex; gap: 1rem; margin-top: 1.6rem; font-size: .74rem; color: var(--muted); font-weight: 600; flex-wrap: wrap; }
+  .diff-legend i { display: inline-block; width: .85rem; height: .35rem; border-radius: 999px; margin-right: .35rem; vertical-align: middle; }
+
+  .paths { margin-top: 2.6rem; }
+  .paths h2 { font-size: 1.3rem; font-weight: 800; margin-bottom: .3rem; }
+  .paths .plede { color: var(--muted); font-size: .92rem; margin-bottom: .8rem; }
+  .path { display: flex; gap: .55rem; align-items: center; padding: .75rem 0; border-bottom: .5px solid var(--hairline); flex-wrap: wrap; }
+  .path:last-child { border-bottom: none; }
+  .path b { min-width: 15.5rem; font-size: .9rem; }
+  .path .pstep { background: var(--indigo-50); color: var(--indigo); border-radius: 999px; padding: .16rem .68rem; font-weight: 700; font-size: .8rem; text-decoration: none; transition: all .12s ease; }
+  .path .pstep:hover { background: var(--indigo); color: #fff; }
+  .path .parr { color: var(--faint); font-weight: 700; }
+
+  .mm-section { margin-top: 1.6rem; }
+  .mm-section h2 { font-size: 1.3rem; font-weight: 800; margin-bottom: .2rem; }
+  .mm-section .mm-lede { color: var(--muted); font-size: .92rem; margin-bottom: .4rem; }
+  .mm-wrap { border: 1px solid var(--hairline); border-radius: var(--radius); background: linear-gradient(180deg,#fff, #F2F7FB); padding: .6rem; overflow-x: auto; }
+  .mm-svg { width: 100%; height: auto; display: block; max-width: 60rem; margin: 0 auto; min-width: 34rem; }
+  .mm-link { cursor: pointer; text-decoration: none; }
+  .mm-node rect { transition: opacity .15s ease, filter .15s ease; }
+  .mm-node text { pointer-events: none; }
+  .mm-link:hover .mm-node rect { filter: brightness(1.06); }
+  .mm-edge { transition: opacity .15s ease; }
+
+  .note-band { margin-top: 1.4rem; background: var(--amber-50); border: 1px solid var(--hairline); border-left: 4px solid var(--amber); border-radius: 12px; padding: .9rem 1.1rem; font-size: .88rem; color: var(--ink); }
+  .note-band b { color: var(--amber-ink); }
+
+  .project-band { margin-top: 1.4rem; background: var(--indigo-50); border: 1px solid var(--hairline); border-left: 4px solid var(--indigo); border-radius: 12px; padding: .9rem 1.1rem; font-size: .88rem; color: var(--ink); }
+  .project-band b { color: var(--indigo-deep); }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="eyebrow">Learn Data Pipelines with Phoebe</div>
+    <h1>How one order becomes a dashboard - <span class="accent">in plain English</span></h1>
+    <p class="sub">At 11:41pm someone buys a $42 coffee gift bundle. At 9am an executive glances at a revenue number for four seconds. Six sessions walk the road between those two moments - the pickup, the shelf, the cleanup room, the screen, and the mornings it all quietly breaks. Zero code, zero jargon left undecoded, one pipeline floor you get to break yourself.</p>
+    <div class="stats-row">
+      <div class="stat"><b data-count="6">6</b><span>sessions</span></div>
+      <div class="stat"><b data-count="6">6</b><span>stages, source to screen</span></div>
+      <div class="stat"><b data-count="0">0</b><span>lines of code required</span></div>
+      <div class="stat"><b data-count="45">45</b><span>min per session</span></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="section">
+    <div class="course-grid">
+      <a class="course-card" href="courses/01-follow-the-order.html" style="--diff:#34D399">
+        <span class="cicon">🧭</span>
+        <span class="cnum">Session 1 · easiest</span>
+        <h3>Follow the order: how one purchase becomes a dashboard</h3>
+        <p>The six-stage journey every dashboard number travels, why the Friday spreadsheet always dies the same death, and one of your own numbers traced back to its birthplace.</p>
+        <span class="meta"><span class="pill amber">▶ Start here</span><span class="pill light">The map</span></span>
+      </a>
+      <a class="course-card" href="courses/02-where-data-is-born.html" style="--diff:#34D399">
+        <span class="cicon">🛒</span>
+        <span class="cnum">Session 2 · easiest</span>
+        <h3>Where data is born: sources and the overnight pickup</h3>
+        <p>App databases, click events, files, and third-party feeds - and the trucks that collect them. Batch versus streaming, decoded with a milk run and a conveyor belt.</p>
+        <span class="meta"><span class="pill light">Sources + ingest</span></span>
+      </a>
+      <a class="course-card" href="courses/03-the-cleanup-room.html" style="--diff:#FBBF24">
+        <span class="cicon">🧼</span>
+        <span class="cnum">Session 3 · building</span>
+        <h3>The cleanup room: raw to ready inside the warehouse</h3>
+        <p>Why the shelf keeps an untouched copy of everything, how raw data becomes trustworthy in layers, and the ETL-versus-ELT story told through cheap storage.</p>
+        <span class="meta"><span class="pill light">Store + transform</span></span>
+      </a>
+      <a class="course-card" href="courses/04-the-last-mile.html" style="--diff:#FBBF24">
+        <span class="cicon">📊</span>
+        <span class="cnum">Session 4 · building</span>
+        <h3>The last mile: dashboards, definitions, and who eats the data</h3>
+        <p>Metrics are decisions wearing numbers. The serving layer, the schedule that runs the whole floor, and why two teams report different revenue with both pipelines healthy.</p>
+        <span class="meta"><span class="pill light">Metrics + serve</span></span>
+      </a>
+      <a class="course-card" href="courses/05-when-pipelines-break.html" style="--diff:#FBBF24">
+        <span class="cicon">🔧</span>
+        <span class="cnum">Session 5 · building</span>
+        <h3>When pipelines break: stale, wrong, and how you find out</h3>
+        <p>The two faces of every failure, the four causes behind most incidents, the safeguards that catch each - and Daybreak's pipeline floor, yours to break, stage by stage.</p>
+        <span class="meta"><span class="pill amber">🔧 The floor</span><span class="pill light">Interactive</span></span>
+      </a>
+      <a class="course-card" href="courses/06-people-tools-next-steps.html" style="--diff:#FB923C">
+        <span class="cicon">🤝</span>
+        <span class="cnum">Session 6 · deepening</span>
+        <h3>People, tools, and next steps: talking to your data team</h3>
+        <p>Who does what on a data team, the full tool-name decoder table, how to ask for data so you actually get it - and the honest ladder to the deeper courses.</p>
+        <span class="meta"><span class="pill light">The decoder</span></span>
+      </a>
+    </div>
+    <div class="diff-legend">
+      <span><i style="background:#34D399"></i>easiest - start here</span>
+      <span><i style="background:#FBBF24"></i>building - the floor</span>
+      <span><i style="background:#FB923C"></i>deepening - making it yours</span>
+    </div>
+
+    <div class="project-band">
+      <b>☕ The running case: Daybreak, order #8412.</b> One coffee-subscription order - $42, bought at 11:41pm on a Sunday - travels the whole course: picked up at 2am, shelved raw at 2:15, cleaned at 4:30, counted at 5:45, on screen at 6:05. Session 5 hands you the wrench and lets you break every stop on its route.
+    </div>
+
+    <div class="note-band">
+      <b>The plain-English promise.</b> Every tool name you have overheard - Snowflake, dbt, Airflow, Fivetran, Looker - gets decoded into a one-line job description. No session requires code, and where a topic deserves real depth, we point honestly at the deeper course (learn-data-warehouse, learn-sql, learn-data-engineering) instead of pretending 45 minutes covers it.
+    </div>
+
+    <div class="paths">
+      <h2>Choose your focus 🧭</h2>
+      <p class="plede">Everyone starts at Session 1 for the map. After that, follow what you need - or walk the whole road in order.</p>
+      <div class="path"><b>🔥 I have a dashboard I do not trust</b>
+        <a class="pstep" href="courses/05-when-pipelines-break.html">5</a><span class="parr">→</span>
+        <a class="pstep" href="courses/06-people-tools-next-steps.html">6</a>
+      </div>
+      <div class="path"><b>🗣 I just want to talk to my data team</b>
+        <a class="pstep" href="courses/01-follow-the-order.html">1</a><span class="parr">→</span>
+        <a class="pstep" href="courses/06-people-tools-next-steps.html">6</a>
+      </div>
+      <div class="path"><b>🛤 The full journey</b>
+        <a class="pstep" href="courses/01-follow-the-order.html">1</a><span class="parr">→</span>
+        <a class="pstep" href="courses/02-where-data-is-born.html">2</a><span class="parr">→</span>
+        <a class="pstep" href="courses/03-the-cleanup-room.html">3</a><span class="parr">→</span>
+        <a class="pstep" href="courses/04-the-last-mile.html">4</a><span class="parr">→</span>
+        <a class="pstep" href="courses/05-when-pipelines-break.html">5</a><span class="parr">→</span>
+        <a class="pstep" href="courses/06-people-tools-next-steps.html">6</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section mm-section">
+    <h2>The knowledge map 🧠</h2>
+    <p class="mm-lede">The whole course at a glance - hover a session to spotlight its concepts, click any node to jump in.</p>
+    <div class="mm-wrap"><div id="mindmap"></div></div>
+  </section>
+
+  <footer class="pagefoot">
+    <span>learn-data-pipelines-with-phoebe · by Phoebe Fu &nbsp;·&nbsp; 📚 <a href="https://phoebefu6.github.io/learn-with-phoebe/">Learn with Phoebe ↗</a> · plain English, zero code, honest pointers</span>
+  </footer>
+</main>
+
+<script>
+window.MINDMAP_DATA = {
+  title: "Data\nPipelines",
+  centerColor: "#075985",
+  sessions: [
+    { label: "Follow\nthe order", href: "courses/01-follow-the-order.html", color: "#34D399",
+      concepts: [
+        { label: "The six stages", href: "courses/01-follow-the-order.html" },
+        { label: "Order #8412's night", href: "courses/01-follow-the-order.html" },
+        { label: "Why spreadsheets die", href: "courses/01-follow-the-order.html" } ] },
+    { label: "Where data\nis born", href: "courses/02-where-data-is-born.html", color: "#34D399",
+      concepts: [
+        { label: "Source types", href: "courses/02-where-data-is-born.html" },
+        { label: "The overnight pickup", href: "courses/02-where-data-is-born.html" },
+        { label: "Batch vs streaming", href: "courses/02-where-data-is-born.html" } ] },
+    { label: "The cleanup\nroom", href: "courses/03-the-cleanup-room.html", color: "#FBBF24",
+      concepts: [
+        { label: "Keep the raw copy", href: "courses/03-the-cleanup-room.html" },
+        { label: "Raw to ready layers", href: "courses/03-the-cleanup-room.html" },
+        { label: "ETL vs ELT", href: "courses/03-the-cleanup-room.html" } ] },
+    { label: "The last\nmile", href: "courses/04-the-last-mile.html", color: "#FBBF24",
+      concepts: [
+        { label: "Metrics are decisions", href: "courses/04-the-last-mile.html" },
+        { label: "Who eats the data", href: "courses/04-the-last-mile.html" },
+        { label: "The 2am schedule", href: "courses/04-the-last-mile.html" } ] },
+    { label: "When pipelines\nbreak", href: "courses/05-when-pipelines-break.html", color: "#FBBF24",
+      concepts: [
+        { label: "Stale vs wrong", href: "courses/05-when-pipelines-break.html" },
+        { label: "The four causes", href: "courses/05-when-pipelines-break.html" },
+        { label: "The pipeline floor", href: "courses/05-when-pipelines-break.html" } ] },
+    { label: "People, tools,\nnext steps", href: "courses/06-people-tools-next-steps.html", color: "#FB923C",
+      concepts: [
+        { label: "Who does what", href: "courses/06-people-tools-next-steps.html" },
+        { label: "The decoder table", href: "courses/06-people-tools-next-steps.html" },
+        { label: "Your next course", href: "courses/06-people-tools-next-steps.html" } ] }
+  ]
+};
+</script>
+<script src="assets/mindmap.js?v=1"></script>
+<script src="assets/app.js?v=1"></script>
+</body>
+</html>
