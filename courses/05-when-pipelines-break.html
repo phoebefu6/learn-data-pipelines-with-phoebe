@@ -148,6 +148,30 @@
       <summary><span class="mode self">Self-study</span>Why prevention alone cannot win<span class="mini">3 min</span><span class="caret">▶</span></summary>
       <div class="body">
         <p>Two of the four causes - schema changes and late data - originate in systems the data team does not control. The checkout app belongs to the product team; the ad data belongs to Google. You cannot code-review another company's release schedule. Since the causes cannot all be prevented, mature teams shift the goal: <strong>minimize time-to-notice, not incident count</strong>. That reframing is the entire logic of part 3, and it mirrors how site-reliability teams think about servers - uptime through fast detection and recovery, not through the fantasy of nothing ever breaking.</p>
+<figure class="zoomable">
+  <svg viewBox="0 0 880 170" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="A bar chart showing the average data incident took over 4 hours to detect and about 9 more hours to resolve, based on a 2022 industry survey, making detection the bottleneck.">
+    <style>
+      .drT { font: 700 13px Inter, sans-serif; fill: #1C2B36; }
+      .drL { font: 600 11px Inter, sans-serif; fill: #1C2B36; }
+      .drV { font: 700 12px Inter, sans-serif; fill: #FFFFFF; }
+      .drN { font: 400 12px Inter, sans-serif; fill: #64707A; }
+    </style>
+    <rect x="0" y="0" width="880" height="170" fill="#FFFFFF"/>
+    <text class="drT" x="40" y="26">The average incident, start to finish</text>
+
+    <text class="drL" x="240" y="67" text-anchor="end">Time to detect</text>
+    <rect x="260" y="48" width="213" height="28" rx="5" fill="#0EA5E9"/>
+    <text class="drV" x="272" y="67">4 hours</text>
+
+    <text class="drL" x="240" y="111" text-anchor="end">Time to resolve</text>
+    <rect x="260" y="92" width="480" height="28" rx="5" fill="#075985"/>
+    <text class="drV" x="272" y="111">9 hours</text>
+
+    <text class="drN" x="40" y="142">Detection took 4+ hours on average, then about 9 more to resolve - detection is the bottleneck.</text>
+  </svg>
+  <figcaption>🔍 Click to zoom - detection takes 4 hours, resolution takes 9 more</figcaption>
+</figure>
+
       </div>
     </details>
   </section>
@@ -176,7 +200,39 @@
       <summary><span class="mode live">Live</span>Data tests - tasting the batch before it ships<span class="mini">4 min</span><span class="caret">▶</span></summary>
       <div class="body">
         <p>A data test is an automatic check on the data's <em>content</em>, run inside the pipeline before results are published. The standard tool (dbt) ships exactly four built-in ones, and they are beautifully mundane:</p>
-        <table class="clean">
+        
+<figure class="zoomable">
+  <svg viewBox="0 0 880 340" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="An overlap diagram showing what freshness checks and data tests each catch and what neither catches: freshness checks catch expired credentials, dead syncs and late data, data tests catch a price field turning to text, duplicate rows and not_null failures, and neither catches a silent metric definition change that counted refunds as revenue and overstated the total by 21,890 dollars.">
+    <style>
+      .ovL { font: 700 11px Inter, sans-serif; fill: #1C2B36; letter-spacing: .03em; }
+      .ovI { font: 400 12px Inter, sans-serif; fill: #1C2B36; }
+      .ovM { font: 700 11px Inter, sans-serif; fill: #3A2A0E; }
+      .ovN { font: 400 12px Inter, sans-serif; fill: #64707A; }
+    </style>
+    <rect x="0" y="0" width="880" height="340" fill="#FFFFFF"/>
+
+    <text class="ovL" x="300" y="30" text-anchor="middle">FRESHNESS CHECKS</text>
+    <circle cx="300" cy="140" r="95" fill="#0284C7" opacity=".18" stroke="#0284C7" stroke-width="1.5"/>
+    <text class="ovI" x="285" y="125" text-anchor="middle">expired creds</text>
+    <text class="ovI" x="285" y="145" text-anchor="middle">dead syncs</text>
+    <text class="ovI" x="285" y="165" text-anchor="middle">late data</text>
+
+    <text class="ovL" x="460" y="30" text-anchor="middle">DATA TESTS</text>
+    <circle cx="460" cy="140" r="95" fill="#C08A3E" opacity=".18" stroke="#C08A3E" stroke-width="1.5"/>
+    <text class="ovI" x="485" y="125" text-anchor="middle">price becomes text</text>
+    <text class="ovI" x="485" y="145" text-anchor="middle">duplicate rows</text>
+    <text class="ovI" x="485" y="165" text-anchor="middle">not_null failures</text>
+
+    <path d="M380,235 V250" fill="none" stroke="#64707A" stroke-width="1.4"/>
+    <rect x="190" y="250" width="380" height="44" rx="8" fill="#F8F0E1" stroke="#C08A3E" stroke-width="1.2"/>
+    <text class="ovM" x="380" y="266" text-anchor="middle">NEITHER CATCHES</text>
+    <text class="ovM" x="380" y="284" text-anchor="middle">$21,890 - refunds counted as revenue</text>
+
+    <text class="ovN" x="40" y="316">Freshness confirms arrival; data tests confirm shape. Neither checks whether a definition is right.</text>
+  </svg>
+  <figcaption>🔍 Click to zoom - two safeguards, and the gap between them that neither covers</figcaption>
+</figure>
+<table class="clean">
           <tr><th>Test</th><th>Plain English</th><th>Daybreak example</th></tr>
           <tr><td><strong>not_null</strong></td><td>this field must never be empty</td><td>every order has a price</td></tr>
           <tr><td><strong>unique</strong></td><td>no duplicates allowed here</td><td>order #8412 appears exactly once</td></tr>
